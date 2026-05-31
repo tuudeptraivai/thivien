@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&amp;family=Inter:wght@100..900&amp;family=Noto+Serif+CJK+JP:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#adedfa",
+                    "on-surface": "#1b1b1f",
+                    "on-primary-fixed-variant": "#871f20",
+                    "background": "#fbf8fe",
+                    "secondary": "#36684c",
+                    "on-primary-container": "#ffa49d",
+                    "tertiary": "#003b43",
+                    "primary-fixed-dim": "#ffb3ad",
+                    "surface-variant": "#e4e1e7",
+                    "secondary-fixed-dim": "#9dd3b0",
+                    "surface-tint": "#a83734",
+                    "inverse-primary": "#ffb3ad",
+                    "surface-container-highest": "#e4e1e7",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#debfbd",
+                    "inverse-surface": "#303034",
+                    "background-parchment": "#F7F4EB",
+                    "secondary-fixed": "#b8efcc",
+                    "on-tertiary-fixed": "#001f24",
+                    "on-error": "#ffffff",
+                    "border-tan": "#E8E2D5",
+                    "surface-dim": "#dcd9de",
+                    "surface-bright": "#fbf8fe",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#3c6e52",
+                    "surface-container-low": "#f5f2f8",
+                    "on-secondary": "#ffffff",
+                    "on-surface-variant": "#574140",
+                    "surface-container-high": "#eae7ed",
+                    "on-secondary-fixed": "#002111",
+                    "muted-gray": "#7A7165",
+                    "surface": "#fbf8fe",
+                    "secondary-container": "#b8efcc",
+                    "on-error-container": "#93000a",
+                    "tertiary-container": "#00545f",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#f3f0f5",
+                    "primary-fixed": "#ffdad7",
+                    "on-background": "#1b1b1f",
+                    "on-tertiary-container": "#87c6d3",
+                    "surface-ivory": "#FAF8F5",
+                    "on-tertiary-fixed-variant": "#004e59",
+                    "reading-sepia": "#F4EFE6",
+                    "tertiary-fixed-dim": "#91d1dd",
+                    "outline": "#8b716f",
+                    "primary": "#6e0a10",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#f0edf2",
+                    "on-secondary-fixed-variant": "#1d5036",
+                    "paper-pure": "#FCFBF9",
+                    "primary-container": "#8e2424",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed": "#410004"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "48px",
+                    "section-padding": "80px",
+                    "gutter": "32px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Lora"],
+                    "cjk-character": ["Noto Serif CJK JP"],
+                    "body-lg": ["Lora"],
+                    "label-md": ["Inter"],
+                    "poem-body": ["Lora"],
+                    "display-lg": ["Lora"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Lora"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "cjk-character": ["22px", {"lineHeight": "2.4", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "poem-body": ["22px", {"lineHeight": "2.2", "fontWeight": "400"}],
+                    "display-lg": ["38px", {"lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .parchment-overlay {
+            background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+            pointer-events: none;
+            opacity: 0.15;
+        }
+        .hot-glow {
+            box-shadow: 0 0 15px -3px rgba(255, 191, 0, 0.3);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .interactive-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .interactive-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -10px rgba(142, 36, 36, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-background-parchment text-on-surface font-body-md min-h-screen relative">
+<div class="fixed inset-0 parchment-overlay z-0"></div>
+<!-- Header Navigation -->
+<header class="fixed top-0 w-full z-50 bg-surface/88 backdrop-blur-xl border-b border-border-tan">
+<div class="flex justify-between items-center h-16 px-margin-desktop max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md font-bold text-primary">Thi Uyển</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="font-body-md text-body-md text-muted-gray hover:text-primary transition-colors duration-300" href="#">Tác giả</a>
+<a class="font-body-md text-body-md text-muted-gray hover:text-primary transition-colors duration-300" href="#">Thơ</a>
+<a class="font-body-md text-body-md text-muted-gray hover:text-primary transition-colors duration-300" href="#">Sáng tác</a>
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1" href="#">Diễn đàn</a>
+</nav>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-muted-gray">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary">search</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary">dark_mode</span>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md hover:opacity-90 transition-opacity">Đăng nhập</button>
+</div>
+</div>
+</header>
+<main class="relative z-10 pt-32 pb-section-padding px-margin-desktop max-w-container-max mx-auto">
+<!-- Forum Hero Section -->
+<section class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="font-display-lg text-display-lg text-primary mb-2">Diễn đàn Văn học</h1>
+<p class="font-body-lg text-body-lg text-muted-gray italic">Nơi hội ngộ của những tâm hồn yêu văn chương, cùng đàm đạo về vẻ đẹp của ngôn từ và di sản.</p>
+</div>
+<button class="bg-secondary text-on-secondary px-8 py-3 rounded-full font-label-md flex items-center gap-2 hover:brightness-110 transition-all shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                Tạo chủ đề mới
+            </button>
+</section>
+<!-- Category Tabs -->
+<nav class="flex overflow-x-auto gap-4 mb-8 no-scrollbar border-b border-border-tan">
+<button class="px-6 py-3 font-label-md text-primary border-b-2 border-primary whitespace-nowrap">Tất cả</button>
+<button class="px-6 py-3 font-label-md text-muted-gray hover:text-primary transition-colors whitespace-nowrap">Thơ Việt</button>
+<button class="px-6 py-3 font-label-md text-muted-gray hover:text-primary transition-colors whitespace-nowrap">Đường thi</button>
+<button class="px-6 py-3 font-label-md text-muted-gray hover:text-primary transition-colors whitespace-nowrap">Hán Nôm</button>
+<button class="px-6 py-3 font-label-md text-muted-gray hover:text-primary transition-colors whitespace-nowrap">Dịch thuật</button>
+<button class="px-6 py-3 font-label-md text-muted-gray hover:text-primary transition-colors whitespace-nowrap">Phê bình</button>
+</nav>
+<!-- Main Content Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Topics List (70%) -->
+<div class="lg:col-span-8 space-y-4">
+<!-- Topic Row: Pinned -->
+<div class="interactive-card bg-surface-ivory border border-border-tan rounded-lg p-5 flex gap-5">
+<div class="flex-shrink-0">
+<img alt="Avatar" class="w-12 h-12 rounded-full border border-border-tan" data-alt="A dignified close-up portrait of an elderly scholar with silver hair and wire-rimmed glasses, captured in a soft, natural morning light within a traditional wood-paneled library. The background is blurred with shelves of leather-bound books, creating a serene, scholarly atmosphere. The visual style is refined and high-end, utilizing a palette of warm parchment and deep ink tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_BpfSs5mIa8rW0KP2a3dlb9WhQKZp-lI_Pt9033C45ga0ZAgaox4B2_U17xe7wBlQAb8AvDHpV-ov1aHLd29qCbQeNLY6gW7WXz6Zd4N5vZz9l0UmOIBhA7kQSVqsopamKhAvGMTl7VVAfjC5jNPaFc0QPTFSWVe3SZuYpVq-aNskMMYfSMifK0MZtC4LRMyx9F1uxQDz0q4FdFsOm6fsfz8wSh1cuEw2_bJ9vJV4pxCErxV8kwAiXZabtfThoypg5ke4fgeQBw"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-3 mb-1">
+<span class="bg-primary/10 text-primary px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase">PINNED</span>
+<h3 class="font-headline-md text-[18px] text-primary hover:underline cursor-pointer">Hướng dẫn tham gia và Quy định Diễn đàn Thi Uyển</h3>
+</div>
+<p class="text-muted-gray text-sm line-clamp-1 mb-3">Chào mừng các thi hữu đến với vườn thơ Thi Uyển. Vui lòng đọc kỹ nội quy trước khi đăng bài...</p>
+<div class="flex items-center gap-6 text-[12px] text-muted-gray font-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">person</span> Quản trị viên</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">folder</span> Thông báo</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">chat_bubble</span> 1,240 phản hồi</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> 45.2k lượt xem</span>
+</div>
+</div>
+</div>
+<!-- Topic Row: Hot -->
+<div class="interactive-card bg-surface-ivory border border-border-tan rounded-lg p-5 flex gap-5 hot-glow border-on-secondary-container/20">
+<div class="flex-shrink-0">
+<img alt="Avatar" class="w-12 h-12 rounded-full border border-border-tan" data-alt="A profile photograph of a young woman with a thoughtful expression, dressed in modern minimalist linen clothing. She is sitting in a sunlit atrium with lush green bamboo plants visible in the softly out-of-focus background. The lighting is ethereal and bright, emphasizing a tranquil, literary mood. The color scheme is dominated by muted greens and warm ivory." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMmHlzw52r24kifFFpDup0aB5CNMlCYP_ARK8PMnvxa62l_Upp3GL-aSk_KR11LuFASRRdeNPSEcgDXIZZMmcs_GayOwWbKlfoHDjyMkiUrHgDWYdG6EjlvNXYGNHOoOJuLCeQLu9-cxefbnIcQgCobZLe9LKH9nUBGc39Y5plFB_t7XLDAHmn0mDmc_lFeualfJUBJGrnQYiV_jVEDRxcyNqBxkOf7zVUGpz1tesV8P9EDG5AxuZSCFxZW975QJ-Ntb7uQ9KSTQ"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-3 mb-1">
+<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase">HOT</span>
+<h3 class="font-headline-md text-[18px] text-on-surface hover:text-primary transition-colors cursor-pointer">Vẻ đẹp của 'Nghịch lữ' trong thơ Cao Bá Quát</h3>
+</div>
+<p class="text-muted-gray text-sm line-clamp-1 mb-3">Tôi vừa đọc lại tập thơ của Thánh Quát và đặc biệt ấn tượng với cách ông sử dụng hình ảnh...</p>
+<div class="flex items-center gap-6 text-[12px] text-muted-gray font-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">person</span> Lam Anh</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">folder</span> Phê bình</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">chat_bubble</span> 86 phản hồi</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> 2.1k lượt xem</span>
+</div>
+</div>
+<div class="hidden sm:flex flex-col items-end justify-center text-[11px] text-muted-gray min-w-[120px]">
+<span class="font-bold">Tin mới nhất</span>
+<span>15 phút trước</span>
+<span class="text-primary hover:underline cursor-pointer">Bởi Minh Triết</span>
+</div>
+</div>
+<!-- Regular Topics -->
+<div class="interactive-card bg-surface-ivory border border-border-tan rounded-lg p-5 flex gap-5">
+<div class="flex-shrink-0">
+<img alt="Avatar" class="w-12 h-12 rounded-full border border-border-tan" data-alt="A portrait of a male literature professor in his 40s, wearing a charcoal grey turtleneck, looking contemplative. He is positioned against a background of aged manuscripts and calligraphy brushes on a dark wood desk. The lighting is dramatic and warm, like a quiet evening study. The overall aesthetic is scholarly and grounded in tradition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCavLvDw7VU_tRlX_LLag99e1-cNWEzOSrTPFj6ytPlVzwAhiMLKmsmru9zaEqToCs_2eGnpoqREGAVPydv0ND9lUdwcm_DxfugftLVMPM-Zr-gEon0Rx0ahoRzc3sYBnAemRyALJUcllSguH9m4Y_qTN1uZ7Z55fYtHWIACOrjfc6bRHYzRnzJeJX50lKBPhE9HNm_UQMo8osjWYdWeGWakKgVl-ychroX-9TiX-AtkSoaKkS7vpjiDGGHVVhJBkzrgjtQpYldHg"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-headline-md text-[18px] text-on-surface mb-1 hover:text-primary transition-colors cursor-pointer">Thảo luận về cách dịch bài 'Tĩnh dạ tứ' của Lý Bạch</h3>
+<p class="text-muted-gray text-sm line-clamp-1 mb-3">Liệu "Sàng tiền minh nguyệt quang" nên dịch là "đầu giường" hay "cái sập"? Mời các cao nhân...</p>
+<div class="flex items-center gap-6 text-[12px] text-muted-gray font-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">person</span> Nguyễn Du Học</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">folder</span> Dịch thuật</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">chat_bubble</span> 42 phản hồi</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> 890 lượt xem</span>
+</div>
+</div>
+</div>
+<div class="interactive-card bg-surface-ivory border border-border-tan rounded-lg p-5 flex gap-5 opacity-80">
+<div class="flex-shrink-0">
+<img alt="Avatar" class="w-12 h-12 rounded-full border border-border-tan" data-alt="A minimalist overhead shot of an artist's workspace featuring a white ceramic tea cup, an open fountain pen, and a sheet of rice paper with elegant calligraphy. The scene is bright and airy, with soft shadows casting a calm, peaceful mood. The style is modern East Asian heritage, focusing on clean lines and tactile textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCY_BrxHH72jLo88PWL-lWxbQFtGTtJIFXfwmbYCyDdhxiPVirtF85vq6lPWdJEr7T_cjxPuHPyrvenNiJhC7xF8G72OlvL98MxtKssBv0XTUouLcYY1IiLEmSJ88zXcG7YNEL5m5SHIQs1ZLMioXzmqGEThO340bz7F4q4eb39E218ER8_QRrgEziiPRcdLY26EMcirUoSsZr7alXHBoXT3YsKXwlig4rwrvNUzzfacVn54enZtD5YCwosIQfAXWwLYtkEVJmHfQ"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-3 mb-1">
+<span class="material-symbols-outlined text-[18px] text-muted-gray">lock</span>
+<h3 class="font-headline-md text-[18px] text-muted-gray">Cuộc thi thơ "Hương Thu 2023" - Đã kết thúc</h3>
+</div>
+<p class="text-muted-gray text-sm line-clamp-1 mb-3">Cảm ơn tất cả các thành viên đã gửi bài dự thi. Ban giám khảo đang tiến hành chấm giải...</p>
+<div class="flex items-center gap-6 text-[12px] text-muted-gray font-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">person</span> BTC Thi Uyển</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">folder</span> Sự kiện</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">chat_bubble</span> 312 phản hồi</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> 12.4k lượt xem</span>
+</div>
+</div>
+</div>
+<!-- More placeholder rows for visual rhythm -->
+<div class="interactive-card bg-surface-ivory border border-border-tan rounded-lg p-5 flex gap-5">
+<div class="flex-shrink-0">
+<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary font-bold">MT</div>
+</div>
+<div class="flex-grow">
+<h3 class="font-headline-md text-[18px] text-on-surface mb-1 hover:text-primary transition-colors cursor-pointer">Tìm hiểu về thể thơ Song thất Lục bát đặc trưng của Việt Nam</h3>
+<p class="text-muted-gray text-sm line-clamp-1 mb-3">Tại sao thể thơ này lại tạo được âm hưởng bi tráng trong Chinh Phụ Ngâm? Chúng ta hãy cùng phân tích...</p>
+<div class="flex items-center gap-6 text-[12px] text-muted-gray font-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">person</span> Minh Triết</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">folder</span> Thơ Việt</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">chat_bubble</span> 18 phản hồi</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> 450 lượt xem</span>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex justify-center gap-2 pt-8">
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-border-tan text-muted-gray hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-on-primary">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-border-tan text-muted-gray hover:border-primary hover:text-primary transition-all">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-border-tan text-muted-gray hover:border-primary hover:text-primary transition-all">3</button>
+<span class="flex items-end px-2 text-muted-gray">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-border-tan text-muted-gray hover:border-primary hover:text-primary transition-all">12</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-border-tan text-muted-gray hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Sidebar (26%) -->
+<aside class="lg:col-span-4 space-y-8">
+<!-- Hot Topics Widget -->
+<div class="bg-paper-pure border border-border-tan p-6 rounded-lg shadow-sm">
+<h4 class="font-headline-md text-[20px] text-primary border-b border-border-tan pb-3 mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+                        Chủ đề sôi nổi
+                    </h4>
+<ul class="space-y-4">
+<li class="group cursor-pointer">
+<span class="text-[11px] font-bold text-secondary uppercase tracking-tighter block mb-1">ĐƯỜNG THI</span>
+<a class="font-body-md text-sm text-on-surface group-hover:text-primary transition-colors leading-snug block">Phân tích tính nhạc trong thơ Đỗ Phủ</a>
+<span class="text-[11px] text-muted-gray">156 phản hồi • 2 giờ trước</span>
+</li>
+<li class="group cursor-pointer">
+<span class="text-[11px] font-bold text-secondary uppercase tracking-tighter block mb-1">DỊCH THUẬT</span>
+<a class="font-body-md text-sm text-on-surface group-hover:text-primary transition-colors leading-snug block">Bản dịch mới cho 'Truyện Kiều' sang tiếng Pháp</a>
+<span class="text-[11px] text-muted-gray">98 phản hồi • 5 giờ trước</span>
+</li>
+<li class="group cursor-pointer">
+<span class="text-[11px] font-bold text-secondary uppercase tracking-tighter block mb-1">SÁNG TÁC</span>
+<a class="font-body-md text-sm text-on-surface group-hover:text-primary transition-colors leading-snug block">Họa thơ: Tiết Thanh Minh</a>
+<span class="text-[11px] text-muted-gray">215 phản hồi • 1 ngày trước</span>
+</li>
+</ul>
+</div>
+<!-- Active Members Widget -->
+<div class="bg-paper-pure border border-border-tan p-6 rounded-lg shadow-sm">
+<h4 class="font-headline-md text-[20px] text-primary border-b border-border-tan pb-3 mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+                        Thành viên tích cực
+                    </h4>
+<div class="flex flex-wrap gap-3">
+<div class="relative group cursor-pointer" title="Minh Triết">
+<img class="w-10 h-10 rounded-full border-2 border-primary" data-alt="A miniature circular avatar of a middle-aged Asian man with a gentle smile and traditional scholar's cap. The lighting is soft and warm." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBw19dAWlUidwVllM8Ar0Ohq9xhP-UZGL0BgpDyoUkqGd-c7FDtSC_iCuvjdn8mQFB3-0Svy6DijJI7Mbq8ni80JXXDluSPwGxxHhZ327K9fO5JrgjmaE5aWyghFyYq-u9FgekhF9URmj9aigNrGPnvFiy3GBdWnsUoVRyYpx0uCloikBbPgdmbsZf_VwzRsr4L3D6lc97KRldHMbPmNTfHhQB1YDcs6EcdPc_R4Ryyx9JEWIigF0bawyOq2r3SoiZPvgkyc7KV3w"/>
+<div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+</div>
+<div class="relative group cursor-pointer" title="Lam Anh">
+<img class="w-10 h-10 rounded-full border-2 border-transparent hover:border-secondary transition-all" data-alt="A miniature circular avatar profile image of a young woman with a thoughtful expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEyNiE0M-uHKBhWMwWrLI-NFcKYseexNr8UoY4t2HEmIPCpBQg8MCSSr4nl-JpjzaRb5vxhTBwDW1uDxI5Qgjx5HmA0J-A_1gap2fUy6-_9lDyIoEZkggLf_nSRLotlbmzN-WZd6yG4DdbIxqp0DixzW2DYdlS1vsLhUd3pRhPLq9g1bFx7LCZkWIUoDFBjA8hituG_ZL6UtFznf4AmcY2VteJoGbL748_A9kTQHBJBj1_5kVXU5-1tCCwzHSU_v_1wXP9IYUdpQ"/>
+</div>
+<div class="relative group cursor-pointer" title="Cố Nhân">
+<div class="w-10 h-10 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center text-xs font-bold">CN</div>
+</div>
+<div class="relative group cursor-pointer" title="Nguyễn Du Học">
+<img class="w-10 h-10 rounded-full border-2 border-transparent" data-alt="A miniature circular avatar of an Asian man in a dark turtleneck." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVjYGV6BmCffI7H3XzDWBlQa4rscnOlB_YLri8sT22wMxkF04-NsB7XFo3EYVf_UoXGGteKGMCpzewJZ25KLAT6UrdK6AJSAckpguR1tnZ-9AjYpOAeCiiZfN8_q6bGQbJFFjG1xYdYVrV0f0xVdk-dYYnuyjSZhDaJ9tSyCOD23zQpKTKGLQS7YnkVIKlrOFERcAryEd6ROc_elOjUiZRIJmqHl6xH5obz_qY11fTgr2sJ4q0LsTuIaisBrp6CxLiYNEvJKkcsg"/>
+</div>
+<div class="relative group cursor-pointer" title="Thiên Di">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center text-xs font-bold">TD</div>
+</div>
+</div>
+</div>
+<!-- Forum Rules -->
+<div class="bg-reading-sepia border border-border-tan p-6 rounded-lg">
+<h4 class="font-headline-md text-[18px] text-primary mb-3">Nội quy ngắn</h4>
+<ul class="text-sm text-muted-gray space-y-3 font-body-md">
+<li class="flex gap-2"><span class="text-primary">•</span> Tôn trọng thi hữu và quan điểm khác biệt.</li>
+<li class="flex gap-2"><span class="text-primary">•</span> Không đăng nội dung vi phạm pháp luật.</li>
+<li class="flex gap-2"><span class="text-primary">•</span> Trích dẫn nguồn đầy đủ khi đăng tác phẩm.</li>
+<li class="flex gap-2"><span class="text-primary">•</span> Giữ gìn sự trong sáng của Tiếng Việt.</li>
+</ul>
+<a class="inline-block mt-4 text-primary font-label-sm border-b border-primary/30 hover:border-primary transition-all" href="#">Xem chi tiết nội quy →</a>
+</div>
+<!-- Ad/Promotion space -->
+<div class="relative h-48 rounded-lg overflow-hidden group cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="An atmospheric photograph of an old wooden library ladder leaning against high shelves filled with antique books. Sunlight streams through a window, illuminating dust motes in the air. The mood is evocative and nostalgic, with a color palette of deep mahoganies and soft ambers. High-end literary aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByL4VsW8vo45miNgT-aKgFPshwq2uUNWOuOmGDSr1kTTrKP5ySHbZPDZTd8uKM_7vt97OFm6ucfwk63ROo66hq3ZadSjpTvzPOfuUGU4IcdddbaMDpP1sspmeVNq5_Z0fbMcTwiN2syo0Qqrcn_SPo2Q927F1IiSAIyeMw36XIPzDFdKM9wO7xHFJGBe4tLspWOko4phyh-Yv2fIoCpSfMM_EimloIOcIxSwfo4TbcXEMmVBGYI2Xh2Jx55fqz6mwI119dBb458g"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex flex-col justify-end p-5">
+<span class="text-[10px] text-white/70 uppercase font-bold mb-1">Ấn phẩm mới</span>
+<h5 class="text-white font-headline-md text-lg leading-tight">Tuyển tập Thi Uyển 2024</h5>
+<p class="text-white/80 text-[12px]">Đặt mua ngay để ủng hộ cộng đồng</p>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-tertiary dark:bg-on-tertiary-fixed text-on-tertiary">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-section-padding max-w-container-max mx-auto">
+<div class="md:col-span-1">
+<div class="font-headline-lg text-headline-lg text-on-tertiary mb-4">Thi Uyển</div>
+<p class="text-on-tertiary/70 text-sm leading-relaxed">
+                    © 2024 Thi Uyển.<br/>Modern East Asian Heritage.<br/>Dẫn bước tâm hồn vào vườn thơ dân tộc.
+                </p>
+</div>
+<div>
+<h5 class="font-label-md font-bold text-on-tertiary mb-4 uppercase tracking-widest">Khám phá</h5>
+<ul class="space-y-2 text-on-tertiary/70 text-sm">
+<li><a class="hover:text-on-tertiary transition-colors" href="#">Về chúng tôi</a></li>
+<li><a class="hover:text-on-tertiary transition-colors" href="#">Thư viện Hán Nôm</a></li>
+<li><a class="hover:text-on-tertiary transition-colors" href="#">Tác giả tiêu biểu</a></li>
+<li><a class="hover:text-on-tertiary transition-colors" href="#">Di sản văn hóa</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md font-bold text-on-tertiary mb-4 uppercase tracking-widest">Cộng đồng</h5>
+<ul class="space-y-2 text-on-tertiary/70 text-sm">
+<li><a class="hover:text-on-tertiary transition-colors font-bold" href="#">Diễn đàn thảo luận</a></li>
+<li><a class="hover:text-on-tertiary transition-colors" href="#">Câu lạc bộ họa thơ</a></li>
+<li><a class="hover:text-on-tertiary transition-colors" href="#">Sự kiện văn chương</a></li>
+<li><a class="hover:text-on-tertiary transition-colors" href="#">Thành viên ưu tú</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md font-bold text-on-tertiary mb-4 uppercase tracking-widest">Công cụ</h5>
+<ul class="space-y-2 text-on-tertiary/70 text-sm">
+<li><a class="hover:text-on-tertiary transition-colors" href="#">Tra cứu vần luật</a></li>
+<li><a class="hover:text-on-tertiary transition-colors" href="#">Từ điển Hán Việt</a></li>
+<li><a class="hover:text-on-tertiary transition-colors" href="#">Giao diện đọc tối ưu</a></li>
+<li><a class="hover:text-on-tertiary transition-colors" href="#">Góp ý phát triển</a></li>
+</ul>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions for tabs
+        document.querySelectorAll('nav button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('nav button').forEach(b => {
+                    b.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                    b.classList.add('text-muted-gray');
+                });
+                this.classList.remove('text-muted-gray');
+                this.classList.add('text-primary', 'border-b-2', 'border-primary');
+            });
+        });
+
+        // Search bar focus effect
+        window.addEventListener('keydown', function(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                alert('Search triggered');
+            }
+        });
+    </script>
+</body></html>

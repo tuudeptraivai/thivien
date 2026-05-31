@@ -1,0 +1,83 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator';
+
+export class CreatePoemVersionDto {
+  @ApiPropertyOptional({ default: 'Bản chuẩn' })
+  @IsOptional()
+  @IsString()
+  version_name?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  content: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  transcription?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  explanation?: string;
+
+  @ApiPropertyOptional({ default: true })
+  @IsOptional()
+  @IsBoolean()
+  is_primary?: boolean;
+}
+
+export class CreatePoemDto {
+  @ApiProperty({ example: 'Đoạn trường tân thanh' })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  title: string;
+
+  @ApiProperty({ example: 101 })
+  @IsNumber()
+  author_id: number;
+
+  @ApiPropertyOptional({ example: 9 })
+  @IsOptional()
+  @IsNumber()
+  category_id?: number;
+
+  @ApiPropertyOptional({ example: 5 })
+  @IsOptional()
+  @IsNumber()
+  era_id?: number;
+
+  @ApiPropertyOptional({ example: 'Thanh Hiên thi tập' })
+  @IsOptional()
+  @IsString()
+  source_info?: string;
+
+  @ApiPropertyOptional({ default: false })
+  @IsOptional()
+  @IsBoolean()
+  is_member_poem?: boolean;
+
+  @ApiPropertyOptional({ example: 'published' })
+  @IsOptional()
+  @IsString()
+  status?: string;
+
+  @ApiPropertyOptional({ type: [CreatePoemVersionDto] })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreatePoemVersionDto)
+  versions?: CreatePoemVersionDto[];
+}

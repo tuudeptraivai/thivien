@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Danh Bạ Tác Giả - Thi Uyển</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Noto+Serif+CJK+TC:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Lora:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "muted-gray": "#7A7165",
+                        "on-primary": "#ffffff",
+                        "border-tan": "#E8E2D5",
+                        "surface-variant": "#e4e1e7",
+                        "on-tertiary-container": "#87c6d3",
+                        "secondary-container": "#b8efcc",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#8e2424",
+                        "tertiary": "#003b43",
+                        "surface-container-highest": "#e4e1e7",
+                        "outline-variant": "#debfbd",
+                        "surface-tint": "#a83734",
+                        "tertiary-container": "#00545f",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#001f24",
+                        "on-primary-fixed": "#410004",
+                        "surface-bright": "#fbf8fe",
+                        "surface": "#fbf8fe",
+                        "surface-container-low": "#f5f2f8",
+                        "tertiary-fixed-dim": "#91d1dd",
+                        "surface-container": "#f0edf2",
+                        "secondary-fixed": "#b8efcc",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#ffdad7",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#871f20",
+                        "on-secondary-fixed": "#002111",
+                        "on-secondary-container": "#3c6e52",
+                        "reading-sepia": "#F4EFE6",
+                        "inverse-primary": "#ffb3ad",
+                        "on-secondary-fixed-variant": "#1d5036",
+                        "secondary": "#36684c",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#004e59",
+                        "primary": "#6e0a10",
+                        "on-surface-variant": "#574140",
+                        "on-background": "#1b1b1f",
+                        "outline": "#8b716f",
+                        "on-primary-container": "#ffa49d",
+                        "paper-pure": "#FCFBF9",
+                        "secondary-fixed-dim": "#9dd3b0",
+                        "tertiary-fixed": "#adedfa",
+                        "surface-dim": "#dcd9de",
+                        "background": "#fbf8fe",
+                        "on-error": "#ffffff",
+                        "background-parchment": "#F7F4EB",
+                        "surface-ivory": "#FAF8F5",
+                        "on-surface": "#1b1b1f",
+                        "primary-fixed-dim": "#ffb3ad",
+                        "inverse-surface": "#303034",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f3f0f5",
+                        "surface-container-high": "#eae7ed"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "section-padding": "80px",
+                        "container-max": "1280px",
+                        "margin-mobile": "16px",
+                        "gutter": "32px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "body-lg": ["Lora"],
+                        "display-lg": ["Lora"],
+                        "headline-md": ["Lora"],
+                        "label-sm": ["Inter"],
+                        "cjk-character": ["Noto Serif CJK TC"],
+                        "poem-body": ["Lora"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Lora"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "display-lg": ["38px", {"lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "cjk-character": ["22px", {"lineHeight": "2.4", "fontWeight": "400"}],
+                        "poem-body": ["22px", {"lineHeight": "2.2", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .parchment-grain {
+            background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+            background-repeat: repeat;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .card-lift {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+        }
+        .card-lift:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px -10px rgba(142, 36, 36, 0.15);
+        }
+        .letter-bg {
+            user-select: none;
+            pointer-events: none;
+            opacity: 0.03;
+            font-family: 'Noto Serif CJK TC', serif;
+        }
+    </style>
+</head>
+<body class="bg-background-parchment text-on-background font-body-md parchment-grain min-h-screen">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/88 backdrop-blur-xl dark:bg-background/88 border-b border-border-tan dark:border-outline-variant transition-all duration-300 ease-in-out">
+<div class="flex justify-between items-center h-16 px-margin-desktop max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Thi Uyển</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="font-body-md text-body-md text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 transition-colors duration-300" href="#">Tác giả</a>
+<a class="font-body-md text-body-md text-muted-gray dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Thơ</a>
+<a class="font-body-md text-body-md text-muted-gray dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Sáng tác</a>
+<a class="font-body-md text-body-md text-muted-gray dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Diễn đàn</a>
+</div>
+<div class="flex items-center space-x-6">
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:opacity-70 transition-opacity">search</span>
+<span class="material-symbols-outlined text-primary cursor-pointer hover:opacity-70 transition-opacity">dark_mode</span>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md hover:bg-primary-container transition-all">Đăng nhập</button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="pt-32 pb-section-padding px-margin-desktop max-w-container-max mx-auto">
+<!-- Header & Breadcrumb -->
+<header class="mb-12">
+<nav class="flex items-center space-x-2 text-muted-gray font-label-sm mb-4">
+<a class="hover:text-primary transition-colors" href="#">Trang chủ</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-medium">Tác giả</span>
+</nav>
+<h1 class="font-display-lg text-display-lg text-primary">Thư viện Tác giả</h1>
+</header>
+<!-- Sticky Filter Bar -->
+<section class="sticky top-16 z-40 bg-surface-ivory/95 backdrop-blur-md py-4 mb-8 border-y border-border-tan flex flex-wrap items-center justify-between gap-4">
+<div class="flex flex-wrap items-center gap-4 flex-grow">
+<!-- Search -->
+<div class="relative min-w-[280px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-gray">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-white border border-border-tan rounded-full focus:ring-1 focus:ring-primary focus:border-primary outline-none font-body-md transition-all" placeholder="Tìm tên tác giả..." type="text"/>
+</div>
+<!-- Dropdowns -->
+<select class="bg-white border border-border-tan rounded-full px-4 py-2 font-label-md focus:ring-1 focus:ring-primary outline-none cursor-pointer">
+<option>Quốc gia</option>
+<option>Việt Nam</option>
+<option>Trung Hoa</option>
+<option>Nhật Bản</option>
+</select>
+<select class="bg-white border border-border-tan rounded-full px-4 py-2 font-label-md focus:ring-1 focus:ring-primary outline-none cursor-pointer">
+<option>Thời đại</option>
+<option>Lý - Trần</option>
+<option>Hậu Lê</option>
+<option>Nguyễn</option>
+<option>Hiện đại</option>
+</select>
+<!-- Verified Toggle -->
+<label class="flex items-center space-x-2 cursor-pointer group">
+<div class="relative">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-border-tan rounded-full peer peer-checked:bg-secondary transition-colors"></div>
+<div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full peer-checked:translate-x-5 transition-transform"></div>
+</div>
+<span class="font-label-md text-muted-gray group-hover:text-primary">Đã xác minh</span>
+</label>
+</div>
+<!-- Sort -->
+<div class="flex items-center space-x-2 text-muted-gray">
+<span class="material-symbols-outlined text-sm">sort</span>
+<select class="bg-transparent border-none font-label-md focus:ring-0 cursor-pointer text-primary font-semibold">
+<option>Mới nhất</option>
+<option>A-Z</option>
+<option>Nổi bật</option>
+</select>
+</div>
+</section>
+<!-- Alphabet Index -->
+<nav class="flex flex-wrap justify-center gap-2 md:gap-4 mb-16 border-b border-border-tan pb-4">
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">#</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">A</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">B</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">C</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">D</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">E</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">G</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">H</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">I</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">K</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">L</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">M</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-primary border-b-2 border-primary font-bold" href="#">N</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">O</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">P</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">Q</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">R</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">S</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">T</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">U</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">V</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">X</a>
+<a class="w-8 h-8 flex items-center justify-center font-label-md text-muted-gray hover:text-primary transition-colors" href="#">Y</a>
+</nav>
+<!-- Author Grid Grouped by Letter N -->
+<section class="relative mb-24">
+<div class="absolute -top-16 -left-12 letter-bg text-[240px] font-bold leading-none select-none">N</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Author Card 1 -->
+<div class="card-lift bg-surface-ivory p-6 border border-border-tan group cursor-pointer">
+<div class="flex flex-col items-center text-center">
+<div class="relative w-24 h-24 mb-4">
+<img alt="Author Portrait" class="w-full h-full object-cover rounded-full border-2 border-primary" data-alt="A dignified close-up portrait of an elderly East Asian scholar in traditional silken robes. The background is a soft-focus library with ancient scrolls and wooden shelves. The lighting is warm and natural, casting soft shadows. The overall aesthetic is one of wisdom, heritage, and serene scholarly life in a classical setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxA1ZgEDoUFFRysYAOF33d53iuB144XPE3uWzh_5qm7anyq5IwGEMd47MzFTyOdnZ7hJzXXhwq3LSpvEorhuq6neZaCK40A2wW5eMnpQbmeOK0Fy5DFF9U07JjS-S0Iq-nr-rlSEpbFPIDSOLoQe8WH_uUiXkQxtkF40J5Ct7svkUVIl-y-_FyBEIWhWMif7JIJE9lI8mEsc-zySavFxMkEWbmnOgr1nDVzQ81FkR5NsUPUmVmj-9KLRtDGYWInL6exBfq6ZrhJg"/>
+<span class="absolute bottom-0 right-0 text-xl">🇻🇳</span>
+</div>
+<h3 class="font-headline-md text-primary mb-1 group-hover:text-primary-container transition-colors">Nguyễn Trãi</h3>
+<p class="font-label-sm text-secondary mb-3 px-3 py-1 bg-secondary-container/30 rounded-full">Hậu Lê</p>
+<div class="flex items-center space-x-2 text-muted-gray font-body-md">
+<span class="material-symbols-outlined text-sm">auto_stories</span>
+<span>452 tác phẩm</span>
+</div>
+</div>
+</div>
+<!-- Author Card 2 -->
+<div class="card-lift bg-surface-ivory p-6 border border-border-tan group cursor-pointer">
+<div class="flex flex-col items-center text-center">
+<div class="relative w-24 h-24 mb-4">
+<img alt="Author Portrait" class="w-full h-full object-cover rounded-full border-2 border-border-tan group-hover:border-primary transition-colors" data-alt="A portrait of a contemplative scholar-official from the Tang Dynasty era, wearing a traditional dark hat and charcoal grey scholar's robe. He is seated at a minimalist desk with inkstones and brushes. The style is reminiscent of classical ink wash painting with a modern digital clarity. The atmosphere is quiet, intellectual, and steeped in cultural history." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCE2OMKEbO3tayRVFnrCYAiGspIwlWcCyCD3fWFdGmyQsiQ-UjIBxOTVK5J6uDIdRi4NiamqEtXZjyGo3xiejA_4vY-FDYPisydbLes9aT2xKxJPUo3xq2yi2ffQKBID93hjGVNOcm7LEJP-DMGFO4zFB4I8g2yM6mN3rROsvTeyS2bS_HoZfpDc5OdB73GUBPQTbqXP7MMTA0nk2i6dN8fqQz9Br8L5OhGFvHI00uFgDCWC-RGOGHjksb56JQ6UFY06F9HnJJw4A"/>
+<span class="absolute bottom-0 right-0 text-xl">🇨🇳</span>
+</div>
+<h3 class="font-headline-md text-primary mb-1 group-hover:text-primary-container transition-colors">Nam Cung Toản</h3>
+<p class="font-label-sm text-secondary mb-3 px-3 py-1 bg-secondary-container/30 rounded-full">Đường triều</p>
+<div class="flex items-center space-x-2 text-muted-gray font-body-md">
+<span class="material-symbols-outlined text-sm">auto_stories</span>
+<span>128 tác phẩm</span>
+</div>
+</div>
+</div>
+<!-- Author Card 3 -->
+<div class="card-lift bg-surface-ivory p-6 border border-border-tan group cursor-pointer">
+<div class="flex flex-col items-center text-center">
+<div class="relative w-24 h-24 mb-4">
+<img alt="Author Portrait" class="w-full h-full object-cover rounded-full border-2 border-border-tan group-hover:border-primary transition-colors" data-alt="A close-up photographic portrait of a modern Vietnamese poet with a thoughtful expression. She is wearing a minimal indigo linen dress. The environment is a bright, airy garden with bamboo leaves creating dappled shadows. The lighting is high-key and fresh, capturing a bridge between traditional values and modern literary expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZYY-hzUImnJ8Nht-Saome8hsiZv-KLh59g2vfucJf9hw4iQKydalyr243Xg1MTz3ftrNGvwNDDsfnRVTEYxS0Xe5DwM5zslM7clVbwqCMqitaEYflXxool88YujWBED31m2RJImujXUSY4R6AHnzdp-tVkFQgFv1H3pTWNr0x3qrd-vznEZcuDeFISYodO9UphsEDxadj4XWwo8o4v3fjRm6IEWEXsvH6g4qO5xwyvmuKbmSm-oVG4c9V42E8aL9EpE9F9fomUw"/>
+<span class="absolute bottom-0 right-0 text-xl">🇻🇳</span>
+</div>
+<h3 class="font-headline-md text-primary mb-1 group-hover:text-primary-container transition-colors">Ngọc Hân Công Chúa</h3>
+<p class="font-label-sm text-secondary mb-3 px-3 py-1 bg-secondary-container/30 rounded-full">Tây Sơn</p>
+<div class="flex items-center space-x-2 text-muted-gray font-body-md">
+<span class="material-symbols-outlined text-sm">auto_stories</span>
+<span>12 tác phẩm</span>
+</div>
+</div>
+</div>
+<!-- Author Card 4 -->
+<div class="card-lift bg-surface-ivory p-6 border border-border-tan group cursor-pointer">
+<div class="flex flex-col items-center text-center">
+<div class="relative w-24 h-24 mb-4">
+<img alt="Author Portrait" class="w-full h-full object-cover rounded-full border-2 border-border-tan group-hover:border-primary transition-colors" data-alt="A cinematic character study of a wise monk-poet in saffron and ochre robes. He is walking through a misty mountain forest at dawn. The light is diffused and ethereal, highlighting the texture of the fabric and the peaceful expression of the subject. The aesthetic is serene, spiritual, and deeply connected to nature and East Asian heritage." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGAy8igF7VqCX2bdiDYIRg_s2UZeTReIBa8XQCV5q2-x9SVZHg9Y2uA0FR6zNMXCPbQo54jCkXTmJ1sB88dtZ5yHil68iJ1bae2CrgJIUAG4bs8aeUSjKfrxGhd5hrq8uWxG-e8Y0xE297CjsCHLrqnT55v0cfGRxDhbZg2-H0MAQzN07G1yPhw_-F_Lux7Sr2mwt5GcqN8yYpMSCxT502gBoy5p4nu-Q0RNf3OGGU32JRDaBsV3bRuuM9kaLHxFdrOgXjStXbLw"/>
+<span class="absolute bottom-0 right-0 text-xl">🇻🇳</span>
+</div>
+<h3 class="font-headline-md text-primary mb-1 group-hover:text-primary-container transition-colors">Ngô Thì Sĩ</h3>
+<p class="font-label-sm text-secondary mb-3 px-3 py-1 bg-secondary-container/30 rounded-full">Nguyễn triều</p>
+<div class="flex items-center space-x-2 text-muted-gray font-body-md">
+<span class="material-symbols-outlined text-sm">auto_stories</span>
+<span>324 tác phẩm</span>
+</div>
+</div>
+</div>
+<!-- Author Card 5 -->
+<div class="card-lift bg-surface-ivory p-6 border border-border-tan group cursor-pointer">
+<div class="flex flex-col items-center text-center">
+<div class="relative w-24 h-24 mb-4">
+<img alt="Author Portrait" class="w-full h-full object-cover rounded-full border-2 border-border-tan group-hover:border-primary transition-colors" data-alt="A portrait of a Zen master poet sitting in a tranquil rock garden. The morning sun casts long, soft shadows over the raked sand. The master wears simple grey cotton robes. The focus is sharp on his calm facial features, embodying a life of meditation and poetic observation. The color palette is muted with earth tones and soft greens." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4MnzOSKn0EelNCx0nEf6SrT1a1ZQfNcKWD3SMPbimqBkj0xSEdEC8VWeuzOrfQAN1ohX7JvnmGbVMp0IUqxRV7Q-IHcoInfcggMQn5TXJ5Tjgd2MAikxdktHEos-kxtt1FHzCfeAyaW-fHUxJR-tD5JmHUAhKgvqdCjLuvXJ4R9H3SfSXLhN6-oD0Ml26ljTEhbgUzuIVbfmb6hwNph_87-OzIFjzAiKyWC16_c3Fohy5Zw21Bn1QgbEA01SrtZaY54OIY4fuFw"/>
+<span class="absolute bottom-0 right-0 text-xl">🇻🇳</span>
+</div>
+<h3 class="font-headline-md text-primary mb-1 group-hover:text-primary-container transition-colors">Nguyễn Du</h3>
+<p class="font-label-sm text-secondary mb-3 px-3 py-1 bg-secondary-container/30 rounded-full">Nguyễn triều</p>
+<div class="flex items-center space-x-2 text-muted-gray font-body-md">
+<span class="material-symbols-outlined text-sm">auto_stories</span>
+<span>1,200 tác phẩm</span>
+</div>
+</div>
+</div>
+<!-- Author Card 6 -->
+<div class="card-lift bg-surface-ivory p-6 border border-border-tan group cursor-pointer">
+<div class="flex flex-col items-center text-center">
+<div class="relative w-24 h-24 mb-4">
+<img alt="Author Portrait" class="w-full h-full object-cover rounded-full border-2 border-border-tan group-hover:border-primary transition-colors" data-alt="A minimalist and high-end portrait of a contemporary Asian male writer in a modern studio. He is dressed in a structured charcoal blazer over a black turtleneck. The lighting is dramatic, side-lit, emphasizing a sharp and intellectual silhouette. The overall vibe is scholarly yet deeply rooted in modern professional design aesthetics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4Hw9awQAhCzhrWr5lU03ZKPsU30KdKnPa2jmXo4VNVHnb2WQ_6KlzZlp_yT1DcU-bJYj6DTR6JrYsYZ1m6RVbmrIgtKB_mw9f6ZGGqRE3IuwPh-mgeBEM7xp3h7qyOzFdbb2L-uoLWdAnN8q7xaFAWwsD75HI1lxYKl8WgJQh7DQtSWJxdSwqLzae6V2ekt-2Cpj3Ee353EBE3zYIFqmwgDCYlDwz4h-hmnsz8xmCOIVBxOrJWp1e0-7_Hbm2X8hfZtCKs-D3aw"/>
+<span class="absolute bottom-0 right-0 text-xl">🇻🇳</span>
+</div>
+<h3 class="font-headline-md text-primary mb-1 group-hover:text-primary-container transition-colors">Nguyễn Khuyến</h3>
+<p class="font-label-sm text-secondary mb-3 px-3 py-1 bg-secondary-container/30 rounded-full">Cuối thế kỷ XIX</p>
+<div class="flex items-center space-x-2 text-muted-gray font-body-md">
+<span class="material-symbols-outlined text-sm">auto_stories</span>
+<span>85 tác phẩm</span>
+</div>
+</div>
+</div>
+<!-- Author Card 7 -->
+<div class="card-lift bg-surface-ivory p-6 border border-border-tan group cursor-pointer">
+<div class="flex flex-col items-center text-center">
+<div class="relative w-24 h-24 mb-4">
+<img alt="Author Portrait" class="w-full h-full object-cover rounded-full border-2 border-border-tan group-hover:border-primary transition-colors" data-alt="An artistic portrait of a classical woman poet from the Edo period, wearing an intricate kimono with lacquer red accents. She is standing near a shoji screen with the faint silhouette of cherry blossom branches visible behind. The lighting is soft and golden, evocative of a late afternoon. The scene feels timeless, elegant, and deeply poetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7lN6qczmh35_BjPKzj28K5er7vQQvQT5qETuGjNS6EIAjj13Z93WUMcngTerpqp2T5zMJ6GHu1wKqQ-vp1KUrmpvhwlhzDtfGDkicZS1oeJe_6a89M75bU85qZl8HQnN7aJnZQ0di68tjWsoVlYjvvlulReSX7Rhv-LhFXtgDKFjKTKWtp6vp_5oB6HLYYXR5AzaWMsHXq3XVMngtrdGIwWf844yflO1teVVN8nGCLxP34gcjIHeP3NF_6WGFHyuuOZpzu0QL7A"/>
+<span class="absolute bottom-0 right-0 text-xl">🇯🇵</span>
+</div>
+<h3 class="font-headline-md text-primary mb-1 group-hover:text-primary-container transition-colors">Natsume Soseki</h3>
+<p class="font-label-sm text-secondary mb-3 px-3 py-1 bg-secondary-container/30 rounded-full">Meiji</p>
+<div class="flex items-center space-x-2 text-muted-gray font-body-md">
+<span class="material-symbols-outlined text-sm">auto_stories</span>
+<span>210 tác phẩm</span>
+</div>
+</div>
+</div>
+<!-- Author Card 8 -->
+<div class="card-lift bg-surface-ivory p-6 border border-border-tan group cursor-pointer">
+<div class="flex flex-col items-center text-center">
+<div class="relative w-24 h-24 mb-4">
+<img alt="Author Portrait" class="w-full h-full object-cover rounded-full border-2 border-border-tan group-hover:border-primary transition-colors" data-alt="A portrait of a scholar from the Joseon Dynasty wearing a traditional gat hat and white hanbok. He is looking out over a calm lake at sunset. The lighting is rich with oranges and deep purples. The style is cinematic and grand, focusing on the cultural heritage and the philosophical gaze of the poet in a breathtaking natural landscape." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJEoL6PN-69CMRcAu3Z_Gz4jYesSjytmQ3qVQ6RpBg2VNcy0P8IZGE1W9AVl64PsVi6Wd8hNO8mMCOLFkc5EQVZdtar6ljns9s8NAhHhW7bikUcdqRErwCaxOWmCdgqiGjwxr6FArFtyHd1PP7GV_z0dWxIysWT7CMyCKGwx9xIE0Nc97M3gWvyBgeOQ29h0u5hmbRXoN0ug67D0Zr6Bg5BkOG0C1fgkrSWpp5shZEKCXVMDajNPSXBxkPryYPvM6beYGtHpLIUA"/>
+<span class="absolute bottom-0 right-0 text-xl">🇰🇷</span>
+</div>
+<h3 class="font-headline-md text-primary mb-1 group-hover:text-primary-container transition-colors">Nam Hyo-on</h3>
+<p class="font-label-sm text-secondary mb-3 px-3 py-1 bg-secondary-container/30 rounded-full">Joseon</p>
+<div class="flex items-center space-x-2 text-muted-gray font-body-md">
+<span class="material-symbols-outlined text-sm">auto_stories</span>
+<span>56 tác phẩm</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Pagination -->
+<nav class="flex items-center justify-center space-x-2 mt-12">
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-border-tan text-muted-gray hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-on-primary font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-border-tan text-muted-gray hover:bg-primary-container hover:text-white transition-all">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-border-tan text-muted-gray hover:bg-primary-container hover:text-white transition-all">3</button>
+<span class="px-2 text-muted-gray">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-border-tan text-muted-gray hover:bg-primary-container hover:text-white transition-all">24</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-border-tan text-muted-gray hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</nav>
+</main>
+<!-- Footer -->
+<footer class="bg-tertiary dark:bg-on-tertiary-fixed py-section-padding">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-12">
+<div class="col-span-1 md:col-span-1">
+<div class="font-headline-lg text-headline-lg text-on-tertiary mb-4">Thi Uyển</div>
+<p class="text-on-tertiary/70 font-body-md mb-6">Nơi lưu giữ vẻ đẹp vĩnh cửu của văn học Đông Á qua những áng thơ kinh điển.</p>
+</div>
+<div>
+<h4 class="font-label-md text-on-tertiary font-bold mb-4 uppercase tracking-wider">Khám phá</h4>
+<ul class="space-y-2">
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Tác giả nổi bật</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Thơ Đường luật</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Thơ Nôm</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Kinh điển Nhật Bản</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-on-tertiary font-bold mb-4 uppercase tracking-wider">Cộng đồng</h4>
+<ul class="space-y-2">
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Diễn đàn thảo luận</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Góc sáng tác</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Dịch thuật</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-on-tertiary font-bold mb-4 uppercase tracking-wider">Công cụ</h4>
+<ul class="space-y-2">
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Tra từ điển Hán Việt</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Luật bằng trắc</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Hướng dẫn ngâm thơ</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-8 border-t border-on-tertiary/10 text-center">
+<p class="text-on-tertiary/50 font-label-sm">© 2024 Thi Uyển. Modern East Asian Heritage.</p>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for alphabet index
+        document.querySelectorAll('nav.flex.justify-center a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (link.textContent !== '#') {
+                    document.querySelectorAll('nav.flex.justify-center a').forEach(l => {
+                        l.classList.remove('text-primary', 'border-b-2', 'border-primary', 'font-bold');
+                        l.classList.add('text-muted-gray');
+                    });
+                    link.classList.remove('text-muted-gray');
+                    link.classList.add('text-primary', 'border-b-2', 'border-primary', 'font-bold');
+                }
+            });
+        });
+
+        // Simple scroll effect for TopNavBar
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-sm');
+            } else {
+                nav.classList.remove('shadow-sm');
+            }
+        });
+    </script>
+</body></html>
