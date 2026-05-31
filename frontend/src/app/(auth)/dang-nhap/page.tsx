@@ -1,17 +1,89 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { login as loginApi } from "@/lib/api";
+import { useStore } from "@/stores/useStore";
+
+type FieldErrors = { email?: string; password?: string };
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api/v1";
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const router = useRouter();
+  const user = useStore((s) => s.user);
+  const setAuth = useStore((s) => s.setAuth);
+
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [facebookLoading, setFacebookLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) router.replace("/");
+  }, [user, router]);
+
+  function validate(): FieldErrors {
+    const errs: FieldErrors = {};
+    if (!form.email.trim()) errs.email = "Vui lòng nhập email";
+    else if (!EMAIL_RE.test(form.email.trim())) errs.email = "Email không hợp lệ";
+    if (!form.password) errs.password = "Vui lòng nhập mật khẩu";
+    else if (form.password.length < 6) errs.password = "Mật khẩu tối thiểu 6 ký tự";
+    return errs;
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setServerError(null);
+
+    const errs = validate();
+    setFieldErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
+    setSubmitting(true);
+    try {
+      const { user, access_token } = await loginApi(form.email.trim(), form.password);
+      setAuth(user, access_token);
+      router.replace("/");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+        const body = err.response?.data as
+          | { message?: string | string[]; error?: { message?: string | string[] } }
+          | undefined;
+        const raw = body?.error?.message ?? body?.message;
+        const message = Array.isArray(raw) ? raw[0] : raw;
+
+        if (status === 404) {
+          setFieldErrors({ email: message ?? "Email chưa được đăng ký" });
+        } else if (status === 401) {
+          setFieldErrors({ password: message ?? "Mật khẩu không đúng" });
+        } else if (status === 403) {
+          setServerError(message ?? "Tài khoản đã bị khoá");
+        } else if (status === 400) {
+          setServerError(message ?? "Dữ liệu không hợp lệ");
+        } else {
+          setServerError(message ?? "Không thể kết nối máy chủ. Vui lòng thử lại.");
+        }
+      } else {
+        setServerError("Đã xảy ra lỗi không xác định.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   const handleFacebookLogin = () => {
     setFacebookLoading(true);
     window.location.href = `${API_URL}/auth/facebook`;
   };
+
+  if (user) return null;
 
   return (
     <div
@@ -26,12 +98,14 @@ export default function LoginPage() {
           color: "#EAE3D2",
         }}
       >
-        {/* Logo */}
-        <Link href="/" className="text-2xl font-semibold" style={{ fontFamily: "var(--font-lora)", color: "#d4a09a" }}>
+        <Link
+          href="/"
+          className="text-2xl font-semibold"
+          style={{ fontFamily: "var(--font-lora)", color: "#d4a09a" }}
+        >
           ❧ Thi Uyển
         </Link>
 
-        {/* Featured poem */}
         <div>
           <p
             className="text-4xl leading-[1.6] mb-6"
@@ -42,16 +116,15 @@ export default function LoginPage() {
               lineHeight: 2.0,
             }}
           >
-            "Trăm năm trong cõi người ta,
+            &ldquo;Trăm năm trong cõi người ta,
             <br />
-            Chữ tài chữ mệnh khéo là ghét nhau."
+            Chữ tài chữ mệnh khéo là ghét nhau.&rdquo;
           </p>
           <p style={{ color: "#8a7a6e", fontFamily: "var(--font-inter)", fontSize: 14 }}>
             — Nguyễn Du, Truyện Kiều
           </p>
         </div>
 
-        {/* Decorative CJK */}
         <div
           className="absolute right-8 bottom-12 text-[180px] opacity-[0.04] pointer-events-none select-none"
           style={{ fontFamily: "var(--font-cjk)", color: "#fff", lineHeight: 1 }}
@@ -74,57 +147,148 @@ export default function LoginPage() {
             >
               Đăng nhập
             </h1>
-            <p className="text-sm" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
+            <p
+              className="text-sm"
+              style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}
+            >
               Chào mừng trở lại Thi Uyển
             </p>
           </div>
 
-          <form className="space-y-4">
+          {serverError && (
+            <div
+              role="alert"
+              className="mb-4 rounded-lg border px-3 py-2 text-sm"
+              style={{
+                borderColor: "var(--color-lacquer-red)",
+                color: "var(--color-lacquer-red)",
+                background: "rgba(180, 50, 50, 0.06)",
+                fontFamily: "var(--font-inter)",
+              }}
+            >
+              {serverError}
+            </div>
+          )}
+
+          <form className="space-y-4" onSubmit={handleSubmit} noValidate>
             <div>
-              <label className="text-label-caps block mb-1.5" style={{ color: "var(--color-bamboo-green)" }}>
-                TÊN ĐĂNG NHẬP / EMAIL
+              <label
+                htmlFor="login-email"
+                className="text-label-caps block mb-1.5"
+                style={{ color: "var(--color-bamboo-green)" }}
+              >
+                EMAIL
               </label>
               <input
-                type="text"
-                value={form.username}
-                onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
-                placeholder="username hoặc email@example.com"
+                id="login-email"
+                type="email"
+                autoComplete="email"
+                value={form.email}
+                onChange={(e) => {
+                  setForm((f) => ({ ...f, email: e.target.value }));
+                  if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined }));
+                }}
+                placeholder="email@example.com"
+                aria-invalid={!!fieldErrors.email}
+                aria-describedby={fieldErrors.email ? "login-email-error" : undefined}
                 className="w-full border rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[var(--color-lacquer-red)] transition-colors"
                 style={{
-                  borderColor: "var(--color-border-tan)",
+                  borderColor: fieldErrors.email
+                    ? "var(--color-lacquer-red)"
+                    : "var(--color-border-tan)",
                   background: "var(--color-paper-pure)",
                   fontFamily: "var(--font-inter)",
                   color: "var(--fg)",
                 }}
               />
+              {fieldErrors.email && (
+                <p
+                  id="login-email-error"
+                  className="mt-1 text-xs"
+                  style={{ color: "var(--color-lacquer-red)", fontFamily: "var(--font-inter)" }}
+                >
+                  {fieldErrors.email}
+                </p>
+              )}
             </div>
 
             <div>
-              <label className="text-label-caps block mb-1.5" style={{ color: "var(--color-bamboo-green)" }}>
+              <label
+                htmlFor="login-password"
+                className="text-label-caps block mb-1.5"
+                style={{ color: "var(--color-bamboo-green)" }}
+              >
                 MẬT KHẨU
               </label>
-              <input
-                type="password"
-                value={form.password}
-                onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-                placeholder="••••••••"
-                className="w-full border rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[var(--color-lacquer-red)] transition-colors"
-                style={{
-                  borderColor: "var(--color-border-tan)",
-                  background: "var(--color-paper-pure)",
-                  fontFamily: "var(--font-inter)",
-                  color: "var(--fg)",
-                }}
-              />
+              <div className="relative">
+                <input
+                  id="login-password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  value={form.password}
+                  onChange={(e) => {
+                    setForm((f) => ({ ...f, password: e.target.value }));
+                    if (fieldErrors.password)
+                      setFieldErrors((p) => ({ ...p, password: undefined }));
+                  }}
+                  placeholder="••••••••"
+                  aria-invalid={!!fieldErrors.password}
+                  aria-describedby={
+                    fieldErrors.password ? "login-password-error" : undefined
+                  }
+                  className="w-full border rounded-lg px-4 py-2.5 pr-12 text-sm outline-none focus:border-[var(--color-lacquer-red)] transition-colors"
+                  style={{
+                    borderColor: fieldErrors.password
+                      ? "var(--color-lacquer-red)"
+                      : "var(--color-border-tan)",
+                    background: "var(--color-paper-pure)",
+                    fontFamily: "var(--font-inter)",
+                    color: "var(--fg)",
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? "Ẩn mật khẩu" : "Hiển thị mật khẩu"}
+                  aria-pressed={showPassword}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs rounded hover:bg-black/5 transition-colors"
+                  style={{
+                    color: "var(--color-muted-gray)",
+                    fontFamily: "var(--font-inter)",
+                  }}
+                >
+                  {showPassword ? "Ẩn" : "Hiện"}
+                </button>
+              </div>
+              {fieldErrors.password && (
+                <p
+                  id="login-password-error"
+                  className="mt-1 text-xs"
+                  style={{ color: "var(--color-lacquer-red)", fontFamily: "var(--font-inter)" }}
+                >
+                  {fieldErrors.password}
+                </p>
+              )}
               <div className="flex justify-end mt-1.5">
-                <Link href="/quen-mat-khau" className="text-xs hover:underline" style={{ color: "var(--color-lacquer-red)", fontFamily: "var(--font-inter)" }}>
+                <Link
+                  href="/quen-mat-khau"
+                  className="text-xs hover:underline"
+                  style={{
+                    color: "var(--color-lacquer-red)",
+                    fontFamily: "var(--font-inter)",
+                  }}
+                >
                   Quên mật khẩu?
                 </Link>
               </div>
             </div>
 
-            <button type="submit" className="btn-primary w-full py-3 text-sm mt-2">
-              Đăng nhập
+            <button
+              type="submit"
+              disabled={submitting}
+              className="btn-primary w-full py-3 text-sm mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {submitting ? "Đang đăng nhập..." : "Đăng nhập"}
             </button>
           </form>
 
@@ -157,9 +321,16 @@ export default function LoginPage() {
             {facebookLoading ? "Đang chuyển hướng…" : "Đăng nhập với Facebook"}
           </button>
 
-          <p className="text-center mt-6 text-sm" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
+          <p
+            className="text-center mt-6 text-sm"
+            style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}
+          >
             Chưa có tài khoản?{" "}
-            <Link href="/dang-ky" className="font-medium hover:underline" style={{ color: "var(--color-lacquer-red)" }}>
+            <Link
+              href="/dang-ky"
+              className="font-medium hover:underline"
+              style={{ color: "var(--color-lacquer-red)" }}
+            >
               Đăng ký ngay
             </Link>
           </p>

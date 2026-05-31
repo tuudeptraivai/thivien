@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
+import { LocalStrategy } from './local.strategy';
 import { FacebookStrategy } from './facebook.strategy';
 import { User } from '../../entities/user.entity';
 
@@ -22,7 +23,7 @@ import { User } from '../../entities/user.entity';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, JwtStrategy, FacebookStrategy],
+  providers: [AuthService, JwtStrategy, LocalStrategy, FacebookStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })

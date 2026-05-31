@@ -39,7 +39,7 @@ export class AuthController {
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Đăng nhập' })
+  @ApiOperation({ summary: 'Đăng nhập bằng email & mật khẩu' })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }

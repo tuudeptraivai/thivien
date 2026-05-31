@@ -1,7 +1,8 @@
 import {
-  BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -39,35 +40,44 @@ export class AuthService {
     });
 
     const saved = await this.userRepo.save(user);
-    const token = this.signToken(saved);
+    const access_token = this.signToken(saved);
 
     return {
       success: true,
       message: 'Đăng ký tài khoản thành công',
       data: {
         user: this.formatUser(saved),
-        token,
+        access_token,
       },
     };
   }
 
-  async login(dto: LoginDto) {
-    const user = await this.userRepo.findOne({
-      where: [{ username: dto.username_or_email }, { email: dto.username_or_email }],
-    });
+  async validateUser(email: string, password: string): Promise<User> {
+    const user = await this.userRepo.findOne({ where: { email } });
 
-    if (!user || !(await bcrypt.compare(dto.password, user.passwordHash))) {
-      throw new UnauthorizedException('Tên đăng nhập hoặc mật khẩu không đúng');
+    if (!user) {
+      throw new NotFoundException('Email chưa được đăng ký');
     }
 
     if (!user.isActive) {
-      throw new UnauthorizedException('Tài khoản đã bị vô hiệu hoá');
+      throw new ForbiddenException('Tài khoản đã bị khoá. Vui lòng liên hệ quản trị viên');
     }
 
-    const token = this.signToken(user);
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Mật khẩu không đúng');
+    }
+
+    return user;
+  }
+
+  async login(dto: LoginDto) {
+    const user = await this.validateUser(dto.email, dto.password);
+    const access_token = this.signToken(user);
 
     return {
       success: true,
+      message: 'Đăng nhập thành công',
       data: {
         user: {
           ...this.formatUser(user),
@@ -77,7 +87,7 @@ export class AuthService {
             font: user.fontPreference,
           },
         },
-        token,
+        access_token,
       },
     };
   }
