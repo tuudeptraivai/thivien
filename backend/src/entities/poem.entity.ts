@@ -55,6 +55,9 @@ export class Poem {
   @Column({ type: 'varchar', length: 20, default: PoemStatus.PUBLISHED })
   status: PoemStatus;
 
+  @Column({ name: 'scraped_from_url', length: 500, nullable: true, unique: true })
+  scrapedFromUrl: string;
+
   @Column({ name: 'created_by', nullable: true })
   createdBy: number;
 

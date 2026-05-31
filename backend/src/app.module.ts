@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -19,6 +20,7 @@ import { BookmarksModule } from './modules/bookmarks/bookmarks.module';
 import { CountriesModule } from './modules/countries/countries.module';
 import { ErasModule } from './modules/eras/eras.module';
 import { PoemCategoriesModule } from './modules/poem-categories/poem-categories.module';
+import { ScraperModule } from './modules/scraper/scraper.module';
 
 import { User } from './entities/user.entity';
 import { Author } from './entities/author.entity';
@@ -39,6 +41,8 @@ import { PoemCategory } from './entities/poem-category.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+
+    ScheduleModule.forRoot(),
 
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
 
@@ -74,6 +78,7 @@ import { PoemCategory } from './entities/poem-category.entity';
     CountriesModule,
     ErasModule,
     PoemCategoriesModule,
+    ScraperModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },

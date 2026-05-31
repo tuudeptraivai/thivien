@@ -51,6 +51,9 @@ export class Author {
   @Column({ name: 'is_verified', default: false })
   isVerified: boolean;
 
+  @Column({ name: 'scraped_from_url', length: 500, nullable: true, unique: true })
+  scrapedFromUrl: string;
+
   @Column({ name: 'created_by', nullable: true })
   createdBy: number;
 
