@@ -40,6 +40,9 @@ export class User {
   @Column({ name: 'avatar_url', length: 255, nullable: true })
   avatarUrl: string;
 
+  @Column({ name: 'facebook_id', length: 50, nullable: true, unique: true })
+  facebookId: string | null;
+
   @Column({ type: 'varchar', length: 20, default: UserRole.MEMBER })
   role: UserRole;
 
