@@ -23,6 +23,7 @@ describe('AuthService.login()', () => {
     passwordHash: 'hashed-pw',
     displayName: 'Quản trị',
     avatarUrl: null as unknown as string,
+    facebookId: null,
     role: UserRole.ADMIN,
     vnTypingMode: 3,
     themePreference: 'system',

@@ -14,7 +14,13 @@ import slugify from 'slugify';
 import { User } from '../../entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { FacebookProfilePayload } from './facebook.strategy';
+
+export interface FacebookProfilePayload {
+  facebookId: string;
+  email: string | null;
+  displayName: string;
+  avatarUrl: string | null;
+}
 
 @Injectable()
 export class AuthService {
@@ -147,6 +153,38 @@ export class AuthService {
       throw new UnauthorizedException('Tài khoản đã bị vô hiệu hoá');
     }
     return { user, token: this.signToken(user) };
+  }
+
+  async loginWithFacebookAccessToken(accessToken: string) {
+    const url = `https://graph.facebook.com/me?fields=id,name,email,picture.type(large)&access_token=${encodeURIComponent(accessToken)}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new UnauthorizedException('Facebook access token không hợp lệ');
+
+    const data = await res.json() as {
+      id: string;
+      name: string;
+      email?: string;
+      picture?: { data: { url: string } };
+    };
+
+    const profile: FacebookProfilePayload = {
+      facebookId: data.id,
+      email: data.email ?? null,
+      displayName: data.name,
+      avatarUrl: data.picture?.data?.url ?? null,
+    };
+
+    const user = await this.findOrCreateFacebookUser(profile);
+    if (!user.isActive) throw new UnauthorizedException('Tài khoản đã bị vô hiệu hoá');
+
+    return {
+      success: true,
+      message: 'Đăng nhập Facebook thành công',
+      data: {
+        user: this.formatUser(user),
+        access_token: this.signToken(user),
+      },
+    };
   }
 
   private async generateUniqueUsername(displayName: string, facebookId: string): Promise<string> {
