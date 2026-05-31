@@ -9,9 +9,12 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+import slugify from 'slugify';
 import { User } from '../../entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { FacebookProfilePayload } from './facebook.strategy';
 
 @Injectable()
 export class AuthService {
@@ -103,6 +106,63 @@ export class AuthService {
         },
       },
     };
+  }
+
+  async findOrCreateFacebookUser(profile: FacebookProfilePayload): Promise<User> {
+    let user = await this.userRepo.findOne({
+      where: { facebookId: profile.facebookId },
+    });
+    if (user) return user;
+
+    if (profile.email) {
+      user = await this.userRepo.findOne({ where: { email: profile.email } });
+      if (user) {
+        user.facebookId = profile.facebookId;
+        if (!user.avatarUrl && profile.avatarUrl) {
+          user.avatarUrl = profile.avatarUrl;
+        }
+        return this.userRepo.save(user);
+      }
+    }
+
+    const email = profile.email ?? `fb_${profile.facebookId}@facebook.local`;
+    const username = await this.generateUniqueUsername(profile.displayName, profile.facebookId);
+    const randomPassword = crypto.randomBytes(32).toString('hex');
+    const passwordHash = await bcrypt.hash(randomPassword, 12);
+
+    const created = this.userRepo.create({
+      username,
+      email,
+      passwordHash,
+      displayName: profile.displayName,
+      avatarUrl: profile.avatarUrl ?? undefined,
+      facebookId: profile.facebookId,
+    });
+    return this.userRepo.save(created);
+  }
+
+  async loginWithFacebook(profile: FacebookProfilePayload) {
+    const user = await this.findOrCreateFacebookUser(profile);
+    if (!user.isActive) {
+      throw new UnauthorizedException('Tài khoản đã bị vô hiệu hoá');
+    }
+    return { user, token: this.signToken(user) };
+  }
+
+  private async generateUniqueUsername(displayName: string, facebookId: string): Promise<string> {
+    const base = slugify(displayName || `fb-${facebookId}`, {
+      lower: true,
+      strict: true,
+      locale: 'vi',
+    }).slice(0, 40) || `fb-${facebookId}`;
+
+    let candidate = base;
+    let suffix = 0;
+    while (await this.userRepo.findOne({ where: { username: candidate } })) {
+      suffix += 1;
+      candidate = `${base}-${suffix}`;
+    }
+    return candidate;
   }
 
   private signToken(user: User) {
