@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Thi Uyển - Đăng nhập</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Lora:ital,wght@0,400;0,500;0,600;1,400&amp;family=Noto+Serif+CJK+TC:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ink-wash-overlay {
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.4)), 
+                        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            mix-blend-mode: multiply;
+        }
+        .parchment-grain {
+            background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+        }
+        .chinese-calligraphy {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#adedfa",
+                        "on-surface": "#1b1b1f",
+                        "on-primary-fixed-variant": "#871f20",
+                        "background": "#fbf8fe",
+                        "secondary": "#36684c",
+                        "on-primary-container": "#ffa49d",
+                        "tertiary": "#003b43",
+                        "primary-fixed-dim": "#ffb3ad",
+                        "surface-variant": "#e4e1e7",
+                        "secondary-fixed-dim": "#9dd3b0",
+                        "surface-tint": "#a83734",
+                        "inverse-primary": "#ffb3ad",
+                        "surface-container-highest": "#e4e1e7",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#debfbd",
+                        "inverse-surface": "#303034",
+                        "background-parchment": "#F7F4EB",
+                        "secondary-fixed": "#b8efcc",
+                        "on-tertiary-fixed": "#001f24",
+                        "on-error": "#ffffff",
+                        "border-tan": "#E8E2D5",
+                        "surface-dim": "#dcd9de",
+                        "surface-bright": "#fbf8fe",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#3c6e52",
+                        "surface-container-low": "#f5f2f8",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#574140",
+                        "surface-container-high": "#eae7ed",
+                        "on-secondary-fixed": "#002111",
+                        "muted-gray": "#7A7165",
+                        "surface": "#fbf8fe",
+                        "secondary-container": "#b8efcc",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#00545f",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f3f0f5",
+                        "primary-fixed": "#ffdad7",
+                        "on-background": "#1b1b1f",
+                        "on-tertiary-container": "#87c6d3",
+                        "surface-ivory": "#FAF8F5",
+                        "on-tertiary-fixed-variant": "#004e59",
+                        "reading-sepia": "#F4EFE6",
+                        "tertiary-fixed-dim": "#91d1dd",
+                        "outline": "#8b716f",
+                        "primary": "#6e0a10",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#f0edf2",
+                        "on-secondary-fixed-variant": "#1d5036",
+                        "paper-pure": "#FCFBF9",
+                        "primary-container": "#8e2424",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#410004"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "section-padding": "80px",
+                        "gutter": "32px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Lora"],
+                        "cjk-character": ["Noto Serif CJK TC"],
+                        "body-lg": ["Lora"],
+                        "label-md": ["Inter"],
+                        "poem-body": ["Lora"],
+                        "display-lg": ["Lora"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Lora"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background-parchment font-body-md text-on-surface selection:bg-primary-container selection:text-white">
+<main class="flex min-h-screen">
+<!-- Left Side: Atmospheric Branding -->
+<section class="hidden md:flex relative w-1/2 bg-on-tertiary-fixed overflow-hidden flex-col items-center justify-center p-margin-desktop">
+<!-- Background Image with Ink Wash Styling -->
+<img alt="Bamboo Ink Wash" class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-lighten" data-alt="A cinematic, minimalist ink-wash painting of delicate bamboo stalks against a deep charcoal and misty black background. The style is traditional East Asian sumi-e, featuring expressive brushstrokes and subtle gradients that evoke a sense of quietude and scholarly elegance. The lighting is low-key, with a soft focus on the bamboo leaves, creating a serene, private library atmosphere with a scholarly and tranquil mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqHCvhJBROLDpiOim7cRxfZAqW7nl808vsTpRAs7gbb8my6MwN53QTU0GAnTWSSn9dq-B1s9uidxJNwJlZFqIiG5ZvXtbbI93eQ3EthmWUzXY1zZPVlRFG9zvm37d8sBhF3U-F165WPWCUqnvzBW0xRaXT9Z9Hvs3bAvpUWa39nwdpuaIWrRJw-6NlESM-Pj0n4MKL-CVtHUSPraV3aTZW2NTbOA8cW76ZvR4pGDOyJP5bf9SygjUAqd4n7nymw3daM9DG_dCjGg"/>
+<div class="relative z-10 flex flex-col items-center text-center">
+<!-- Large Calligraphy Logo Placeholder -->
+<div class="mb-12">
+<h1 class="font-cjk-character text-[80px] leading-none text-surface-ivory opacity-90 chinese-calligraphy">
+                        詩苑
+                    </h1>
+</div>
+<!-- Poem Quote -->
+<div class="max-w-md">
+<p class="font-poem-body text-headline-md italic text-surface-ivory leading-relaxed mb-6">
+                        "Đọc thơ như uống trà,<br/>
+                        Mỗi lời một vị, đậm đà thanh cao."
+                    </p>
+<span class="font-label-md text-surface-variant tracking-widest uppercase">— Tản Đà</span>
+</div>
+</div>
+<!-- Subtle Decorative Element -->
+<div class="absolute bottom-12 left-12 w-32 h-1 bg-primary-container opacity-50"></div>
+</section>
+<!-- Right Side: Login Form -->
+<section class="w-full md:w-1/2 bg-surface-ivory parchment-grain flex flex-col items-center justify-center px-margin-mobile md:px-24">
+<div class="w-full max-w-sm">
+<!-- Mobile Branding -->
+<div class="md:hidden flex flex-col items-center mb-10">
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">Thi Uyển</h1>
+</div>
+<!-- Form Header -->
+<div class="mb-10 text-center md:text-left">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Chào mừng trở lại</h2>
+<p class="font-body-md text-muted-gray">Cánh cửa vào thư viện thơ ca đang mở.</p>
+</div>
+<!-- Login Form -->
+<form class="space-y-6" id="login-form">
+<!-- Email Input -->
+<div class="group">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2 group-focus-within:text-primary transition-colors" for="email">
+                            Tên đăng nhập hoặc Email
+                        </label>
+<div class="relative">
+<input class="w-full px-4 py-3 bg-transparent border border-border-tan rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all font-body-md" id="email" name="email" placeholder="name@example.com" required="" type="text"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="group">
+<div class="flex justify-between items-center mb-2">
+<label class="block font-label-md text-label-md text-on-surface-variant group-focus-within:text-primary transition-colors" for="password">
+                                Mật khẩu
+                            </label>
+<a class="text-label-sm font-label-sm text-primary hover:underline transition-all" href="#">Quên mật khẩu?</a>
+</div>
+<div class="relative">
+<input class="w-full px-4 py-3 bg-transparent border border-border-tan rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all font-body-md" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-muted-gray hover:text-primary" onclick="togglePassword()" type="button">
+<span class="material-symbols-outlined text-[20px]" id="password-icon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me & Submit -->
+<div class="flex items-center space-x-2">
+<input class="w-4 h-4 text-primary border-border-tan rounded focus:ring-primary" id="remember" name="remember" type="checkbox"/>
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="remember">Ghi nhớ đăng nhập</label>
+</div>
+<button class="w-full py-4 bg-primary text-white font-label-md text-label-md rounded-full hover:bg-primary-container transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 active:translate-y-0" type="submit">
+                        Đăng nhập
+                    </button>
+</form>
+<!-- Divider -->
+<div class="relative my-10">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-border-tan"></div>
+</div>
+<div class="relative flex justify-center text-label-sm uppercase">
+<span class="bg-surface-ivory px-4 text-muted-gray">Hoặc tiếp tục với</span>
+</div>
+</div>
+<!-- Social Login -->
+<button class="w-full flex items-center justify-center gap-3 py-3 border border-border-tan rounded-full bg-white hover:bg-surface-container-low transition-colors duration-300 group">
+<img alt="Google" class="w-5 h-5 group-hover:scale-110 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3kCRup1saI8qBOwNO89EIitkWS9NYl7Lp5iHgY2geJ6UVT87AaKK0HaoNY4T7ayfva3gI7Wzdbb7B6On-dc_W-ZWSGybj8Y5CNz6aYzD2D80_l5Kxyr7tyqeDzbUKq2gyn9T-6mO-D3TncyNQPuWBSNjJqwtEBUhVWMeTR6uSf8e4-cFTkpoMXUrQoZp0WC0aH_Q9Oo0785-SG08kw4eg6PLYN4008bQuTAovzm1wWXMgKkKr0njYysg8nugCHK3YDCodi4Bf5w"/>
+<span class="font-label-md text-label-md text-on-surface-variant">Đăng nhập bằng Google</span>
+</button>
+<!-- Sign Up Link -->
+<div class="mt-12 text-center">
+<p class="font-body-md text-muted-gray">
+                        Chưa có tài khoản? 
+                        <a class="text-primary font-semibold hover:underline" href="#">Tham gia ngay</a>
+</p>
+</div>
+</div>
+</section>
+</main>
+<script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const icon = document.getElementById('password-icon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.textContent = 'visibility_off';
+            } else {
+                passwordInput.type = 'password';
+                icon.textContent = 'visibility';
+            }
+        }
+
+        // Add subtle interaction effect to form inputs
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.closest('.group')?.classList.add('focused');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.closest('.group')?.classList.remove('focused');
+            });
+        });
+
+        // Simple form handling
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Animation for feedback
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Đang xử lý...';
+            setTimeout(() => {
+                btn.textContent = 'Đăng nhập';
+            }, 2000);
+        });
+    </script>
+</body></html>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Thi Uyển - Thống Kê &amp; Phân Tích</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Lora:ital,wght@0,400;0,500;0,600;1,400&amp;family=Noto+Serif+CJK+TC:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#adedfa",
+                    "on-surface": "#1b1b1f",
+                    "on-primary-fixed-variant": "#871f20",
+                    "background": "#fbf8fe",
+                    "secondary": "#36684c",
+                    "on-primary-container": "#ffa49d",
+                    "tertiary": "#003b43",
+                    "primary-fixed-dim": "#ffb3ad",
+                    "surface-variant": "#e4e1e7",
+                    "secondary-fixed-dim": "#9dd3b0",
+                    "surface-tint": "#a83734",
+                    "inverse-primary": "#ffb3ad",
+                    "surface-container-highest": "#e4e1e7",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#debfbd",
+                    "inverse-surface": "#303034",
+                    "background-parchment": "#F7F4EB",
+                    "secondary-fixed": "#b8efcc",
+                    "on-tertiary-fixed": "#001f24",
+                    "on-error": "#ffffff",
+                    "border-tan": "#E8E2D5",
+                    "surface-dim": "#dcd9de",
+                    "surface-bright": "#fbf8fe",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#3c6e52",
+                    "surface-container-low": "#f5f2f8",
+                    "on-secondary": "#ffffff",
+                    "on-surface-variant": "#574140",
+                    "surface-container-high": "#eae7ed",
+                    "on-secondary-fixed": "#002111",
+                    "muted-gray": "#7A7165",
+                    "surface": "#fbf8fe",
+                    "secondary-container": "#b8efcc",
+                    "on-error-container": "#93000a",
+                    "tertiary-container": "#00545f",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#f3f0f5",
+                    "primary-fixed": "#ffdad7",
+                    "on-background": "#1b1b1f",
+                    "on-tertiary-container": "#87c6d3",
+                    "surface-ivory": "#FAF8F5",
+                    "on-tertiary-fixed-variant": "#004e59",
+                    "reading-sepia": "#F4EFE6",
+                    "tertiary-fixed-dim": "#91d1dd",
+                    "outline": "#8b716f",
+                    "primary": "#6e0a10",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#f0edf2",
+                    "on-secondary-fixed-variant": "#1d5036",
+                    "paper-pure": "#FCFBF9",
+                    "primary-container": "#8e2424",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed": "#410004"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "48px",
+                    "section-padding": "80px",
+                    "gutter": "32px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Lora"],
+                    "cjk-character": ["Noto Serif CJK"],
+                    "body-lg": ["Lora"],
+                    "label-md": ["Inter"],
+                    "poem-body": ["Lora"],
+                    "display-lg": ["Lora"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Lora"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "cjk-character": ["22px", {"lineHeight": "2.4", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "poem-body": ["22px", {"lineHeight": "2.2", "fontWeight": "400"}],
+                    "display-lg": ["38px", {"lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .parchment-texture {
+            background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+        }
+        .chart-gradient-lacquer {
+            background: linear-gradient(180deg, rgba(142, 36, 36, 0.1) 0%, rgba(142, 36, 36, 0) 100%);
+        }
+        .lift-on-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .lift-on-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -10px rgba(142, 36, 36, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-background-parchment parchment-texture text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed min-h-screen font-body-md text-body-md">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/88 backdrop-blur-xl dark:bg-background/88 border-b border-border-tan transition-all duration-300 ease-in-out">
+<div class="flex justify-between items-center h-16 px-margin-desktop max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Thi Uyển</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-muted-gray hover:text-primary transition-colors duration-300 font-body-md text-body-md" href="#">Tác giả</a>
+<a class="text-muted-gray hover:text-primary transition-colors duration-300 font-body-md text-body-md" href="#">Thơ</a>
+<a class="text-muted-gray hover:text-primary transition-colors duration-300 font-body-md text-body-md" href="#">Sáng tác</a>
+<a class="text-muted-gray hover:text-primary transition-colors duration-300 font-body-md text-body-md" href="#">Diễn đàn</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="search">search</span>
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="dark_mode">dark_mode</span>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md hover:bg-primary-container transition-colors duration-300">Đăng nhập</button>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-section-padding px-margin-desktop max-w-container-max mx-auto">
+<!-- Dashboard Header -->
+<div class="mb-12">
+<h1 class="font-display-lg text-display-lg text-primary mb-2">Báo Cáo Thống Kê Thường Niên</h1>
+<p class="font-body-lg text-body-lg text-muted-gray italic">"Hành trình bảo tồn và phát huy di sản văn chương qua những con số."</p>
+</div>
+<!-- KPI Cards Section -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-12">
+<!-- Total Poems -->
+<div class="bg-surface-ivory border border-border-tan p-6 rounded-lg lift-on-hover">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="auto_stories">auto_stories</span>
+<span class="text-secondary font-label-sm text-label-sm">+12% vs LY</span>
+</div>
+<h3 class="font-label-md text-label-md text-muted-gray uppercase tracking-wider mb-1">Tổng tác phẩm</h3>
+<div class="font-headline-lg text-headline-lg text-on-surface">112,482</div>
+</div>
+<!-- Authors -->
+<div class="bg-surface-ivory border border-border-tan p-6 rounded-lg lift-on-hover">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="person_pen">person</span>
+<span class="text-secondary font-label-sm text-label-sm">+5.4%</span>
+</div>
+<h3 class="font-label-md text-label-md text-muted-gray uppercase tracking-wider mb-1">Thi hào &amp; Tác giả</h3>
+<div class="font-headline-lg text-headline-lg text-on-surface">5,104</div>
+</div>
+<!-- Countries -->
+<div class="bg-surface-ivory border border-border-tan p-6 rounded-lg lift-on-hover">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="public">public</span>
+<span class="text-muted-gray font-label-sm text-label-sm">Toàn cầu</span>
+</div>
+<h3 class="font-label-md text-label-md text-muted-gray uppercase tracking-wider mb-1">Quốc gia &amp; Vùng</h3>
+<div class="font-headline-lg text-headline-lg text-on-surface">111</div>
+</div>
+<!-- Views -->
+<div class="bg-surface-ivory border border-border-tan p-6 rounded-lg lift-on-hover">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="visibility">visibility</span>
+<span class="text-secondary font-label-sm text-label-sm">+21%</span>
+</div>
+<h3 class="font-label-md text-label-md text-muted-gray uppercase tracking-wider mb-1">Lượt truy cập</h3>
+<div class="font-headline-lg text-headline-lg text-on-surface">3.2M</div>
+</div>
+</div>
+<!-- Main Charts Area -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-12">
+<!-- Poem Additions (Stacked Area) -->
+<div class="md:col-span-8 bg-surface-ivory border border-border-tan p-8 rounded-lg">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-1">Tăng trưởng Kho tàng</h2>
+<p class="text-muted-gray font-label-sm text-label-sm">Số lượng bài thơ được đóng góp theo thời gian (2020 - 2024)</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="text-label-sm">Cổ điển</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+<span class="text-label-sm">Hiện đại</span>
+</div>
+</div>
+</div>
+<div class="h-64 flex items-end gap-1 relative overflow-hidden">
+<div class="absolute inset-0 chart-gradient-lacquer opacity-30 pointer-events-none"></div>
+<!-- Simplified Visual Representation of a Stacked Area Chart -->
+<div class="flex-1 bg-primary/20 h-[30%] rounded-t-sm relative group">
+<div class="absolute inset-x-0 bottom-0 bg-primary h-[60%] opacity-80 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-primary/20 h-[45%] rounded-t-sm relative group">
+<div class="absolute inset-x-0 bottom-0 bg-primary h-[55%] opacity-80 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-primary/20 h-[40%] rounded-t-sm relative group">
+<div class="absolute inset-x-0 bottom-0 bg-primary h-[70%] opacity-80 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-primary/20 h-[60%] rounded-t-sm relative group">
+<div class="absolute inset-x-0 bottom-0 bg-primary h-[65%] opacity-80 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-primary/20 h-[55%] rounded-t-sm relative group">
+<div class="absolute inset-x-0 bottom-0 bg-primary h-[80%] opacity-80 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-primary/20 h-[75%] rounded-t-sm relative group">
+<div class="absolute inset-x-0 bottom-0 bg-primary h-[70%] opacity-80 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-primary/20 h-[85%] rounded-t-sm relative group">
+<div class="absolute inset-x-0 bottom-0 bg-primary h-[75%] opacity-80 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-primary/20 h-[95%] rounded-t-sm relative group">
+<div class="absolute inset-x-0 bottom-0 bg-primary h-[85%] opacity-80 group-hover:opacity-100 transition-opacity"></div>
+</div>
+</div>
+<div class="flex justify-between mt-4 text-muted-gray font-label-sm text-label-sm border-t border-border-tan pt-2">
+<span>Q1 2023</span><span>Q2 2023</span><span>Q3 2023</span><span>Q4 2023</span><span>Q1 2024</span>
+</div>
+</div>
+<!-- Country Distribution (Donut) -->
+<div class="md:col-span-4 bg-surface-ivory border border-border-tan p-8 rounded-lg flex flex-col">
+<h2 class="font-headline-md text-headline-md text-primary mb-1">Phân bổ Địa lý</h2>
+<p class="text-muted-gray font-label-sm text-label-sm mb-8">Nguồn gốc tác phẩm</p>
+<div class="flex-grow flex items-center justify-center relative py-4">
+<div class="w-48 h-48 rounded-full border-[16px] border-primary flex items-center justify-center relative">
+<div class="absolute inset-0 rounded-full border-[16px] border-secondary border-l-transparent border-t-transparent border-b-transparent rotate-45"></div>
+<div class="text-center">
+<span class="block font-headline-lg text-headline-lg">68%</span>
+<span class="block font-label-sm text-label-sm uppercase text-muted-gray">Việt Nam</span>
+</div>
+</div>
+</div>
+<div class="space-y-3 mt-6">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-primary"></span><span class="text-label-md">Việt Nam</span></div>
+<span class="font-bold">76.4k</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-secondary"></span><span class="text-label-md">Trung Hoa</span></div>
+<span class="font-bold">24.1k</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-tertiary-container"></span><span class="text-label-md">Khác</span></div>
+<span class="font-bold">12.0k</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Charts Area -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-12">
+<!-- Top Genres (Horizontal Bar) -->
+<div class="bg-surface-ivory border border-border-tan p-8 rounded-lg">
+<h2 class="font-headline-md text-headline-md text-primary mb-6">Thể loại Phổ biến</h2>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between mb-2"><span class="font-label-md">Thơ Lục Bát</span><span class="text-muted-gray">32,150 bài</span></div>
+<div class="h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[85%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-2"><span class="font-label-md">Thơ Đường Luật (Thất ngôn)</span><span class="text-muted-gray">28,400 bài</span></div>
+<div class="h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[75%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-2"><span class="font-label-md">Thơ Tự Do</span><span class="text-muted-gray">15,200 bài</span></div>
+<div class="h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[40%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-2"><span class="font-label-md">Thơ Ngũ Ngôn</span><span class="text-muted-gray">12,100 bài</span></div>
+<div class="h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[32%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Community Activity (Line Chart) -->
+<div class="bg-surface-ivory border border-border-tan p-8 rounded-lg">
+<div class="flex justify-between items-start mb-6">
+<h2 class="font-headline-md text-headline-md text-primary">Hoạt động Cộng đồng</h2>
+<select class="bg-transparent border-none focus:ring-0 text-muted-gray text-label-sm cursor-pointer">
+<option>30 ngày qua</option>
+<option>90 ngày qua</option>
+</select>
+</div>
+<div class="h-48 relative mt-12">
+<!-- Fake Line Chart with SVG -->
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 100 100">
+<path d="M0,80 Q10,75 20,50 T40,60 T60,20 T80,45 T100,10" fill="none" stroke="#8E2424" stroke-width="2" vector-effect="non-scaling-stroke"></path>
+<circle class="hover:r-6 cursor-help" cx="20" cy="50" fill="#8E2424" r="4"></circle>
+<circle class="hover:r-6 cursor-help" cx="60" cy="20" fill="#8E2424" r="4"></circle>
+<circle class="hover:r-6 cursor-help" cx="100" cy="10" fill="#8E2424" r="4"></circle>
+</svg>
+<div class="absolute bottom-0 w-full flex justify-between pt-4 border-t border-border-tan text-muted-gray text-label-sm">
+<span>Tuần 1</span><span>Tuần 2</span><span>Tuần 3</span><span>Tuần 4</span>
+</div>
+</div>
+<div class="mt-8 flex gap-8">
+<div>
+<span class="block text-muted-gray text-label-sm uppercase tracking-tighter">Bình luận</span>
+<span class="text-headline-md text-on-surface">12.4k</span>
+</div>
+<div>
+<span class="block text-muted-gray text-label-sm uppercase tracking-tighter">Yêu thích</span>
+<span class="text-headline-md text-on-surface">45.8k</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Leaderboards Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter border-t border-border-tan pt-12">
+<!-- Top Poems -->
+<div>
+<h3 class="font-headline-md text-headline-md text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="star">star</span> Tác phẩm tiêu biểu
+                </h3>
+<ul class="space-y-4">
+<li class="flex items-center gap-4 group cursor-pointer">
+<div class="w-10 h-10 rounded bg-primary-container text-white flex items-center justify-center font-bold">1</div>
+<div>
+<span class="block font-body-md font-bold group-hover:text-primary transition-colors">Truyện Kiều</span>
+<span class="text-label-sm text-muted-gray">Nguyễn Du • 1.2M lượt đọc</span>
+</div>
+</li>
+<li class="flex items-center gap-4 group cursor-pointer">
+<div class="w-10 h-10 rounded bg-primary/10 text-primary flex items-center justify-center font-bold">2</div>
+<div>
+<span class="block font-body-md font-bold group-hover:text-primary transition-colors">Đoàn trường tân thanh</span>
+<span class="text-label-sm text-muted-gray">Nguyễn Du • 850k lượt đọc</span>
+</div>
+</li>
+<li class="flex items-center gap-4 group cursor-pointer">
+<div class="w-10 h-10 rounded bg-primary/10 text-primary flex items-center justify-center font-bold">3</div>
+<div>
+<span class="block font-body-md font-bold group-hover:text-primary transition-colors">Tĩnh dạ tứ</span>
+<span class="text-label-sm text-muted-gray">Lý Bạch • 620k lượt đọc</span>
+</div>
+</li>
+</ul>
+</div>
+<!-- Top Authors -->
+<div>
+<h3 class="font-headline-md text-headline-md text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span> Thi hào lỗi lạc
+                </h3>
+<ul class="space-y-4">
+<li class="flex items-center gap-4 group cursor-pointer">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A dignified close-up portrait of a scholarly elder with a white beard, wearing traditional silk robes, set against a backdrop of ancient scrolls and a warm, low-lit study. The lighting is soft and golden, emphasizing a lifetime of wisdom and literary contribution. The aesthetic is modern heritage, professional and reverent." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDy07qbappZz3Dcp5IC-ygX6qCqG7BVT8CMetLaOYc8--0NBWjlI2rq29oOgiw1dlMJFrFB3YPnoFPy8bZWQdLs1eGn_78FZJvn9jAFXR8gGIYZSG9xWyGzfYrlzb3579ii_b55CAu0H1d0PnWVvb7DyAOzQB-Q55YYTleqT-ItlZQyMXvipSeu152Sd6mbOs8-8mPq3sRXDpk8E0jSttqjlylb5vn2mvnFvsYyxVoWekH7l5NwJeRXgkQXC0Z_sYNYNHT8twXZlQ"/>
+<div>
+<span class="block font-body-md font-bold group-hover:text-primary transition-colors">Nguyễn Du</span>
+<span class="text-label-sm text-muted-gray">Đại thi hào dân tộc • 3,254 bài</span>
+</div>
+</li>
+<li class="flex items-center gap-4 group cursor-pointer">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A portrait of a classical scholar from the Tang Dynasty era, depicted with minimalist brushstrokes and a muted charcoal and ink color palette. The subject is calm and contemplative, reflecting the spirit of ancient poetry. The atmosphere is scholarly and serene, illuminated by a natural, diffused light source that creates subtle depth." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEhCFyLphOFDWSkv62OPppAzIbYhPzPjuqDZOAZvjjKNhmwudhWrojkeCbU2gACS-O3OF8ric3yujmOO-CvKFVZGLZeRGAxd6qoSwvxLnmna13xwtx2O-tKTSMyuS9lOpTMXpjRTYwfBNLayRmr8taOxptajMXr_UklCOk-rJqnzB6e6S6msq1e65e6YHzAqw6FdwH_xZ24Av158nxNhE71QO3xLVS9nk7LrwnA8TGIt1VHoKIebF0-SHvdP0CXXwRiosh-hxFMA"/>
+<div>
+<span class="block font-body-md font-bold group-hover:text-primary transition-colors">Lý Bạch</span>
+<span class="text-label-sm text-muted-gray">Thi Tiên • 1,120 bài</span>
+</div>
+</li>
+<li class="flex items-center gap-4 group cursor-pointer">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A stylized digital portrait of a female poet from the 18th century, wearing elegant traditional attire with subtle floral embroidery. The lighting is ethereal and soft-focus, creating a tranquil and intellectual mood. The overall style is clean, modern, and respectful of historical heritage, using ivory and deep lacquer red accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZlSW_8QLXbxNLZxvjKwSaYLGVnPORD2d9NkNaFKosaSZB7N0sMtGj-hpzUPfxjtsx1R5pIIuwO9OYOF7y2_rRj7SSkBjAclAL9qs6gOKv0Tu6HzcMJlM6U3hDmFZwbYAYh5JDqukFQn2nFgPHM1U1TGG4bOrO4sl3XWXh-eT4dkPx3NahowSIecjHprb4VB3ltvzrkU_L_Xr3_vXubBsV48OHfEnjjxNo9MohvzMcqyaDyS8Kg_Rvsrv4EAkmh0ZG182G6dzmSA"/>
+<div>
+<span class="block font-body-md font-bold group-hover:text-primary transition-colors">Hồ Xuân Hương</span>
+<span class="text-label-sm text-muted-gray">Bà chúa thơ Nôm • 142 bài</span>
+</div>
+</li>
+</ul>
+</div>
+<!-- Top Contributors -->
+<div>
+<h3 class="font-headline-md text-headline-md text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="volunteer_activism">volunteer_activism</span> Đóng góp tiêu biểu
+                </h3>
+<ul class="space-y-4">
+<li class="flex items-center gap-4 group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary font-bold">AL</div>
+<div>
+<span class="block font-body-md font-bold group-hover:text-primary transition-colors">An Lạc Viên</span>
+<span class="text-label-sm text-muted-gray">542 bản dịch mới • Cố vấn cấp cao</span>
+</div>
+</li>
+<li class="flex items-center gap-4 group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary font-bold">TM</div>
+<div>
+<span class="block font-body-md font-bold group-hover:text-primary transition-colors">Trần Minh</span>
+<span class="text-label-sm text-muted-gray">1,200 chú thích Hán-Nôm</span>
+</div>
+</li>
+<li class="flex items-center gap-4 group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary font-bold">TH</div>
+<div>
+<span class="block font-body-md font-bold group-hover:text-primary transition-colors">Thúy Hạnh</span>
+<span class="text-label-sm text-muted-gray">Đóng góp 320 bản ghi âm</span>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full bg-tertiary dark:bg-on-tertiary-fixed">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-section-padding max-w-container-max mx-auto">
+<div class="md:col-span-1">
+<span class="font-headline-lg text-headline-lg text-on-tertiary mb-4 block">Thi Uyển</span>
+<p class="text-on-tertiary/70 font-body-md">Thư viện thơ ca trực tuyến lớn nhất Việt Nam. Gìn giữ hồn cốt văn chương dân tộc.</p>
+</div>
+<div>
+<h4 class="text-on-tertiary font-bold mb-4 uppercase tracking-widest text-label-sm">Liên kết</h4>
+<ul class="space-y-2">
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary-container transition-colors" href="#">Về chúng tôi</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary-container transition-colors" href="#">Tính năng</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary-container transition-colors" href="#">Cộng đồng</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary-container transition-colors" href="#">Công cụ</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-on-tertiary font-bold mb-4 uppercase tracking-widest text-label-sm">Hỗ trợ</h4>
+<ul class="space-y-2">
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary-container transition-colors" href="#">Hướng dẫn sử dụng</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary-container transition-colors" href="#">Góp ý nội dung</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary-container transition-colors" href="#">Liên hệ quảng cáo</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-on-tertiary font-bold mb-4 uppercase tracking-widest text-label-sm">Bản tin</h4>
+<div class="flex gap-2">
+<input class="bg-white/10 border-white/20 text-white rounded px-4 py-2 w-full focus:ring-primary focus:border-primary" placeholder="Email của bạn" type="email"/>
+<button class="bg-primary-container text-white px-4 py-2 rounded">Gửi</button>
+</div>
+</div>
+<div class="md:col-span-4 pt-12 border-t border-white/10 flex justify-between items-center text-on-tertiary/50 font-label-sm">
+<span>© 2024 Thi Uyển. Modern East Asian Heritage.</span>
+<div class="flex gap-4">
+<a class="hover:text-on-tertiary" href="#">Facebook</a>
+<a class="hover:text-on-tertiary" href="#">Twitter</a>
+<a class="hover:text-on-tertiary" href="#">YouTube</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions for chart elements
+        document.querySelectorAll('.lift-on-hover').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Subtle feedback could go here
+            });
+        });
+
+        // Initialize tooltips or popovers if needed for "Professional library annual report" feel
+        console.log("Thi Uyển Dashboard Initialized: Academic Excellence mode active.");
+    </script>
+</body></html>

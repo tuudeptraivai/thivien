@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Noto+Serif+CJK+TC:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "muted-gray": "#7A7165",
+                    "on-primary": "#ffffff",
+                    "border-tan": "#E8E2D5",
+                    "surface-variant": "#e4e1e7",
+                    "on-tertiary-container": "#87c6d3",
+                    "secondary-container": "#b8efcc",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-container": "#8e2424",
+                    "tertiary": "#003b43",
+                    "surface-container-highest": "#e4e1e7",
+                    "outline-variant": "#debfbd",
+                    "surface-tint": "#a83734",
+                    "tertiary-container": "#00545f",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#001f24",
+                    "on-primary-fixed": "#410004",
+                    "surface-bright": "#fbf8fe",
+                    "surface": "#fbf8fe",
+                    "surface-container-low": "#f5f2f8",
+                    "tertiary-fixed-dim": "#91d1dd",
+                    "surface-container": "#f0edf2",
+                    "secondary-fixed": "#b8efcc",
+                    "error-container": "#ffdad6",
+                    "primary-fixed": "#ffdad7",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#871f20",
+                    "on-secondary-fixed": "#002111",
+                    "on-secondary-container": "#3c6e52",
+                    "reading-sepia": "#F4EFE6",
+                    "inverse-primary": "#ffb3ad",
+                    "on-secondary-fixed-variant": "#1d5036",
+                    "secondary": "#36684c",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#004e59",
+                    "primary": "#6e0a10",
+                    "on-surface-variant": "#574140",
+                    "on-background": "#1b1b1f",
+                    "outline": "#8b716f",
+                    "on-primary-container": "#ffa49d",
+                    "paper-pure": "#FCFBF9",
+                    "secondary-fixed-dim": "#9dd3b0",
+                    "tertiary-fixed": "#adedfa",
+                    "surface-dim": "#dcd9de",
+                    "background": "#fbf8fe",
+                    "on-error": "#ffffff",
+                    "background-parchment": "#F7F4EB",
+                    "surface-ivory": "#FAF8F5",
+                    "on-surface": "#1b1b1f",
+                    "primary-fixed-dim": "#ffb3ad",
+                    "inverse-surface": "#303034",
+                    "on-error-container": "#93000a",
+                    "inverse-on-surface": "#f3f0f5",
+                    "surface-container-high": "#eae7ed"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-desktop": "48px",
+                    "section-padding": "80px",
+                    "container-max": "1280px",
+                    "margin-mobile": "16px",
+                    "gutter": "32px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "body-lg": ["Lora"],
+                    "display-lg": ["Lora"],
+                    "headline-md": ["Lora"],
+                    "label-sm": ["Inter"],
+                    "cjk-character": ["Noto Serif CJK TC"],
+                    "poem-body": ["Lora"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Lora"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "display-lg": ["38px", {"lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "cjk-character": ["22px", {"lineHeight": "2.4", "fontWeight": "400"}],
+                    "poem-body": ["22px", {"lineHeight": "2.2", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .parchment-overlay {
+            background-image: url("https://www.transparenttextures.com/patterns/rice-paper.png");
+            pointer-events: none;
+        }
+        .shanshui-banner {
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .lift-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .lift-hover:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(142, 36, 36, 0.1); }
+    </style>
+</head>
+<body class="bg-background-parchment font-body-md text-on-background selection:bg-primary-fixed-dim selection:text-primary">
+<!-- Top Navigation -->
+<header class="fixed top-0 w-full z-50 bg-surface/88 backdrop-blur-xl border-b border-border-tan">
+<nav class="flex justify-between items-center h-16 px-margin-desktop max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<a class="font-headline-md text-headline-md font-bold text-primary" href="#">Thi Uyển</a>
+<div class="hidden md:flex gap-6">
+<a class="text-primary border-b-2 border-primary pb-1 font-body-md text-body-md transition-all duration-300" href="#">Tác giả</a>
+<a class="text-muted-gray hover:text-primary transition-colors font-body-md text-body-md" href="#">Thơ</a>
+<a class="text-muted-gray hover:text-primary transition-colors font-body-md text-body-md" href="#">Sáng tác</a>
+<a class="text-muted-gray hover:text-primary transition-colors font-body-md text-body-md" href="#">Diễn đàn</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-gray">search</span>
+<input class="pl-10 pr-4 py-1.5 rounded-full border border-border-tan bg-surface-ivory focus:outline-none focus:ring-1 focus:ring-primary w-64 text-label-md" placeholder="Tìm kiếm tác phẩm..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-muted-gray hover:text-primary">dark_mode</button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md transition-all duration-300 hover:bg-primary-container">Đăng nhập</button>
+</div>
+</nav>
+</header>
+<main class="pt-16 min-h-screen">
+<!-- Hero Banner -->
+<section class="relative h-[260px] w-full overflow-hidden">
+<div class="absolute inset-0 shanshui-banner" data-alt="A cinematic, panoramic shanshui landscape painting featuring misty, ethereal mountains in charcoal ink. Soft ivory and muted charcoal tones dominate the scene, with a subtle texture of aged rice paper. The lighting is diffused and serene, creating a scholarly and historical atmosphere typical of traditional East Asian heritage. Mists swirl between mountain peaks, blending the physical world with a dreamlike state." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBniOqYLrI7Z8Fv_4JmeJrYAbUJBQuUIhxB065fBh2XQpMyzR6EsdEGixP7_zJXFqHFxyC_DPEw_vDQJec7Yr0gHrWSD5DS0X_3bWfUAJIBIh1rN_7C6etz3wpsbAsqowszWI1wbDqOfEDP9Ue4SQuiaw9s7278D_s1O8f32ZrQ8NjMf6U8LkBjp12vkyA6S4uMGPX34Q7BI9M0orzi4rht1Nysxmdjwtai5lVW7I0zdTDwPfAsPvi2YuK-L7xmN98eetkhKk2mzg');">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-parchment via-transparent to-transparent"></div>
+<div class="relative z-10 max-w-container-max mx-auto px-margin-desktop h-full flex items-end pb-8">
+<div class="flex items-center gap-8 w-full">
+<div class="relative">
+<div class="w-[100px] h-[100px] rounded-full border-4 border-primary-container overflow-hidden bg-white shadow-lg">
+<img alt="Nguyễn Du Portrait" class="w-full h-full object-cover" data-alt="A dignified close-up portrait of an elderly Vietnamese scholar from the 18th century, wearing traditional scholarly robes. The character has a wispy beard and a look of profound wisdom and melancholy. The portrait is set against a clean, off-white background with a circular frame. The lighting is soft and focused, emphasizing the intellectual gravitas of the historical figure." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFNXqk14HdNIQEEzvV2U_mOkS5D_ZIVRMYxjeTXDgKqBjEm6lmTGSSd0zTYxUUr0l3PNTYYIQs8mUKf1v4xx_jqVDBgLbtwd59BFNXcoWhgy9aAGe4WJ5sfVqIwOssuoJm-XLVmfAYz48CZXXqWPFV5HjfOab79R-vhaEK_CA78PmdUC47IbEomB0RnjNtK9bzl_FcCzr2_sBPX7cYgVUVDl0d2g_AwUy8jc_o1-vq2doQ-CG6YpaGxwlGRDZN1CRSMxvGYmi0iA"/>
+</div>
+</div>
+<div class="flex-1 pb-2">
+<div class="flex justify-between items-end">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-primary flex items-center gap-4">
+                                    Nguyễn Du <span class="font-cjk-character text-muted-gray text-2xl">阮攸</span>
+</h1>
+<div class="flex items-center gap-4 mt-2 text-muted-gray font-label-md">
+<span class="flex items-center gap-1">🇻🇳 Việt Nam</span>
+<span>•</span>
+<span>1766 – 1820</span>
+<span>•</span>
+<span class="text-primary font-bold">275 tác phẩm</span>
+</div>
+</div>
+<div class="flex gap-3 pb-2">
+<button class="flex items-center gap-2 border border-primary text-primary px-4 py-2 rounded-full font-label-md hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+                                    12.4k
+                                </button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md flex items-center gap-2 hover:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[18px]">share</span>
+                                    Chia sẻ
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Content Area -->
+<div class="max-w-container-max mx-auto px-margin-desktop py-12 flex flex-col md:flex-row gap-gutter">
+<!-- Left Sidebar (Timeline & Tags) -->
+<aside class="w-full md:w-[30%] flex flex-col gap-8">
+<!-- Bio Block -->
+<div class="bg-surface-ivory p-6 rounded-lg border-l-4 border-primary shadow-sm relative overflow-hidden">
+<div class="parchment-overlay absolute inset-0 opacity-20"></div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Tiểu sử</h3>
+<p class="text-on-surface-variant font-body-md text-body-md line-clamp-6 leading-relaxed">
+                        Nguyễn Du (1766–1820), tên tự Tố Như, hiệu Thanh Hiên, là một nhà thơ, nhà văn hóa lớn thời Lê muộn, Tây Sơn và đầu triều Nguyễn. Ông được UNESCO vinh danh là Danh nhân văn hóa thế giới. Di sản lớn nhất của ông là "Truyện Kiều" - một kiệt tác của văn học Việt Nam, phản ánh sâu sắc số phận con người và xã hội thời bấy giờ thông qua ngôn ngữ bác học tinh tế.
+                    </p>
+<button class="text-primary font-bold mt-4 hover:underline flex items-center gap-1 font-label-md transition-all">
+                        Xem thêm <span class="material-symbols-outlined text-[18px]">arrow_right_alt</span>
+</button>
+</div>
+<!-- Timeline -->
+<div class="bg-surface-ivory p-6 rounded-lg border border-border-tan shadow-sm">
+<h3 class="font-label-md text-label-md text-primary uppercase tracking-widest mb-6 border-b border-border-tan pb-2">Dòng thời gian</h3>
+<div class="relative pl-6 flex flex-col gap-8">
+<div class="absolute left-[7px] top-2 bottom-2 w-px bg-border-tan"></div>
+<div class="relative">
+<div class="absolute -left-[23px] top-1.5 w-4 h-4 rounded-full bg-primary ring-4 ring-background-parchment"></div>
+<div class="font-bold text-primary font-label-md">1766</div>
+<div class="text-label-sm text-on-surface-variant mt-1">Sinh tại phường Bích Câu, Thăng Long.</div>
+</div>
+<div class="relative">
+<div class="absolute -left-[23px] top-1.5 w-4 h-4 rounded-full bg-primary ring-4 ring-background-parchment"></div>
+<div class="font-bold text-primary font-label-md">1783</div>
+<div class="text-label-sm text-on-surface-variant mt-1">Đỗ tam trường (Tú tài) tại trường thi Sơn Nam.</div>
+</div>
+<div class="relative">
+<div class="absolute -left-[23px] top-1.5 w-4 h-4 rounded-full bg-primary ring-4 ring-background-parchment"></div>
+<div class="font-bold text-primary font-label-md">1802</div>
+<div class="text-label-sm text-on-surface-variant mt-1">Làm quan dưới triều Nguyễn, bổ nhiệm Tri huyện Phù Dung.</div>
+</div>
+<div class="relative">
+<div class="absolute -left-[23px] top-1.5 w-4 h-4 rounded-full bg-primary ring-4 ring-background-parchment"></div>
+<div class="font-bold text-primary font-label-md">1813</div>
+<div class="text-label-sm text-on-surface-variant mt-1">Được thăng Cần Chánh điện học sĩ, đi sứ nhà Thanh.</div>
+</div>
+<div class="relative">
+<div class="absolute -left-[23px] top-1.5 w-4 h-4 rounded-full bg-primary ring-4 ring-background-parchment"></div>
+<div class="font-bold text-primary font-label-md">1820</div>
+<div class="text-label-sm text-on-surface-variant mt-1">Tạ thế tại Huế, di hài được táng tại làng Tiên Điền.</div>
+</div>
+</div>
+</div>
+<!-- Tags / Categories -->
+<div class="bg-surface-ivory p-6 rounded-lg border border-border-tan">
+<h3 class="font-label-md text-label-md text-primary uppercase tracking-widest mb-4">Chủ đề chính</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-label-sm">Nhân đạo</span>
+<span class="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-label-sm">Hiện thực</span>
+<span class="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-label-sm">Tự sự</span>
+<span class="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-label-sm">Chữ Hán</span>
+<span class="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-label-sm">Chữ Nôm</span>
+</div>
+</div>
+</aside>
+<!-- Right Content (Poem Portfolio) -->
+<main class="w-full md:w-[65%] flex flex-col gap-8">
+<!-- Portfolio Header & Tools -->
+<div class="flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<div class="flex gap-8 border-b border-border-tan w-full">
+<button class="pb-3 border-b-2 border-primary text-primary font-bold font-label-md">Tất cả tác phẩm</button>
+<button class="pb-3 text-muted-gray hover:text-primary font-label-md transition-colors">Theo tập thơ</button>
+<button class="pb-3 text-muted-gray hover:text-primary font-label-md transition-colors">Dịch thuật</button>
+</div>
+</div>
+<div class="flex gap-4 items-center">
+<div class="flex-1 relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-gray">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-white border border-border-tan rounded-lg focus:outline-none focus:ring-1 focus:ring-primary text-body-md" placeholder="Tìm tên bài thơ..." type="text"/>
+</div>
+<button class="flex items-center gap-2 border border-border-tan px-4 py-2 rounded-lg bg-white hover:bg-surface-ivory transition-colors font-label-md">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+                            Bộ lọc
+                        </button>
+<select class="border border-border-tan px-4 py-2 rounded-lg bg-white focus:outline-none font-label-md text-on-surface">
+<option>Mới nhất</option>
+<option>Xem nhiều</option>
+<option>Yêu thích</option>
+</select>
+</div>
+</div>
+<!-- Poem Grid / Collections (Accordion Style) -->
+<div class="space-y-4">
+<!-- Collection Accordion -->
+<div class="border border-border-tan rounded-lg bg-white overflow-hidden">
+<button class="w-full px-6 py-4 flex items-center justify-between bg-surface-ivory hover:bg-border-tan/20 transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-primary/10 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">auto_stories</span>
+</div>
+<div class="text-left">
+<h4 class="font-bold text-primary font-body-lg">Truyện Kiều (Đoạn trường tân thanh)</h4>
+<p class="text-label-sm text-muted-gray">3,254 câu lục bát • Chữ Nôm</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-muted-gray group-hover:text-primary transition-transform duration-300">expand_more</span>
+</button>
+<div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="p-4 rounded border border-border-tan hover:border-primary lift-hover flex justify-between items-center group" href="#">
+<div>
+<div class="font-bold text-on-background group-hover:text-primary transition-colors">Lời tựa</div>
+<div class="text-label-sm text-muted-gray">Lục bát</div>
+</div>
+<span class="material-symbols-outlined text-muted-gray text-sm">arrow_forward</span>
+</a>
+<a class="p-4 rounded border border-border-tan hover:border-primary lift-hover flex justify-between items-center group" href="#">
+<div>
+<div class="font-bold text-on-background group-hover:text-primary transition-colors">Cảnh ngày xuân</div>
+<div class="text-label-sm text-muted-gray">Lục bát</div>
+</div>
+<span class="material-symbols-outlined text-muted-gray text-sm">arrow_forward</span>
+</a>
+<a class="p-4 rounded border border-border-tan hover:border-primary lift-hover flex justify-between items-center group" href="#">
+<div>
+<div class="font-bold text-on-background group-hover:text-primary transition-colors">Kiều ở lầu Ngưng Bích</div>
+<div class="text-label-sm text-muted-gray">Lục bát</div>
+</div>
+<span class="material-symbols-outlined text-muted-gray text-sm">arrow_forward</span>
+</a>
+<div class="p-4 rounded border border-dashed border-border-tan flex items-center justify-center text-primary font-label-md cursor-pointer hover:bg-primary/5 transition-colors">
+                                Xem tất cả 3,254 câu
+                            </div>
+</div>
+</div>
+<!-- Individual Poem Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+<div class="bg-white p-6 border border-border-tan rounded-lg lift-hover group">
+<div class="flex justify-between items-start mb-4">
+<span class="text-label-sm text-secondary uppercase font-bold tracking-tighter">Bắc hành tạp lục</span>
+<span class="material-symbols-outlined text-muted-gray text-[18px]">favorite</span>
+</div>
+<h4 class="font-headline-md text-on-background group-hover:text-primary transition-colors mb-2">Độc Tiểu Thanh ký</h4>
+<p class="text-label-sm text-muted-gray mb-4 line-clamp-2">"Tây Hồ hoa uyển tẫn thành khư..." Một tiếng thở dài trước số phận tài hoa bạc mệnh.</p>
+<div class="flex items-center justify-between text-label-sm border-t border-border-tan pt-4">
+<span class="text-muted-gray">Thất ngôn luật</span>
+<span class="flex items-center gap-1 text-primary">Đọc tiếp <span class="material-symbols-outlined text-[16px]">arrow_forward</span></span>
+</div>
+</div>
+<div class="bg-white p-6 border border-border-tan rounded-lg lift-hover group">
+<div class="flex justify-between items-start mb-4">
+<span class="text-label-sm text-secondary uppercase font-bold tracking-tighter">Nam trung tạp ngâm</span>
+<span class="material-symbols-outlined text-muted-gray text-[18px]">favorite</span>
+</div>
+<h4 class="font-headline-md text-on-background group-hover:text-primary transition-colors mb-2">Long thành cầm giả ca</h4>
+<p class="text-label-sm text-muted-gray mb-4 line-clamp-2">Bài ca về người gảy đàn ở thành Thăng Long, nỗi niềm hoài cổ và biến thiên thời đại.</p>
+<div class="flex items-center justify-between text-label-sm border-t border-border-tan pt-4">
+<span class="text-muted-gray">Hàn luật</span>
+<span class="flex items-center gap-1 text-primary">Đọc tiếp <span class="material-symbols-outlined text-[16px]">arrow_forward</span></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Comments Section -->
+<section class="mt-12 bg-surface-ivory p-8 rounded-lg border border-border-tan">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline-md text-headline-md text-primary">Thảo luận (24)</h3>
+<div class="flex items-center gap-2 text-label-sm text-muted-gray">
+<span>Sắp xếp:</span>
+<button class="font-bold text-on-background underline decoration-primary">Mới nhất</button>
+</div>
+</div>
+<!-- Comment Input -->
+<div class="flex gap-4 mb-10">
+<div class="w-10 h-10 rounded-full bg-border-tan flex items-center justify-center overflow-hidden shrink-0">
+<span class="material-symbols-outlined text-muted-gray">person</span>
+</div>
+<div class="flex-1">
+<textarea class="w-full p-4 rounded-lg border border-border-tan bg-white focus:outline-none focus:ring-1 focus:ring-primary min-h-[100px] text-body-md" placeholder="Chia sẻ suy nghĩ của bạn về tác giả..."></textarea>
+<div class="flex justify-between mt-3 items-center">
+<p class="text-label-sm text-muted-gray">Đăng với tư cách khách (không cần tài khoản)</p>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md hover:bg-primary-container transition-all shadow-sm">Gửi bình luận</button>
+</div>
+</div>
+</div>
+<!-- Comments List -->
+<div class="space-y-8">
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="text-on-secondary-container font-bold text-sm">HV</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<span class="font-bold text-on-background font-label-md">Hoàng Văn</span>
+<span class="text-label-sm text-muted-gray">2 giờ trước</span>
+</div>
+<p class="text-body-md text-on-surface-variant leading-relaxed mb-3">
+                                    Truyện Kiều không chỉ là thơ, đó là cả một tâm hồn Việt. Cảm ơn Thi Uyển đã lưu trữ những tư liệu quý giá này.
+                                </p>
+<div class="flex items-center gap-6">
+<button class="flex items-center gap-1 text-label-sm text-muted-gray hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">thumb_up</span> 12
+                                    </button>
+<button class="text-label-sm text-primary font-bold hover:underline">Phản hồi</button>
+</div>
+<!-- Nested Reply -->
+<div class="mt-6 flex gap-4 pl-6 border-l-2 border-border-tan">
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+<span class="text-primary font-bold text-xs">QT</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<span class="font-bold text-on-background font-label-md">Quản trị viên</span>
+<span class="px-2 py-0.5 bg-primary text-on-primary rounded text-[10px] uppercase font-bold">Admin</span>
+<span class="text-label-sm text-muted-gray">1 giờ trước</span>
+</div>
+<p class="text-body-md text-on-surface-variant leading-relaxed mb-3">
+                                            Rất vui vì bạn yêu thích. Chúng tôi đang cập nhật thêm bản chú giải Hán-Nôm cho tập Bắc Hành Tạp Lục.
+                                        </p>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-1 text-label-sm text-muted-gray">
+<span class="material-symbols-outlined text-[18px]">thumb_up</span> 4
+                                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-tertiary text-on-tertiary mt-20">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-section-padding max-w-container-max mx-auto">
+<div class="md:col-span-1">
+<h2 class="font-headline-lg text-headline-lg text-on-tertiary mb-4">Thi Uyển</h2>
+<p class="text-on-tertiary/70 font-body-md text-body-md">© 2024 Thi Uyển. Modern East Asian Heritage. Giữ gìn và phát huy tinh hoa văn hóa truyền thống.</p>
+</div>
+<div>
+<h4 class="font-label-md text-on-tertiary mb-6 uppercase tracking-widest">Khám phá</h4>
+<ul class="space-y-4">
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Tác giả tiêu biểu</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Tuyển tập thơ cổ</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Dịch thuật &amp; Chú giải</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-on-tertiary mb-6 uppercase tracking-widest">Cộng đồng</h4>
+<ul class="space-y-4">
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Diễn đàn thảo luận</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Câu lạc bộ Hán Nôm</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Sự kiện văn hóa</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-on-tertiary mb-6 uppercase tracking-widest">Liên kết</h4>
+<ul class="space-y-4">
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Về chúng tôi</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Điều khoản dịch vụ</a></li>
+<li><a class="text-on-tertiary/70 hover:text-on-tertiary transition-colors" href="#">Chính sách bảo mật</a></li>
+</ul>
+</div>
+</div>
+</footer>
+<!-- Floating Action (Contextual: Book/Library) -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary-container text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform z-40">
+<span class="material-symbols-outlined">library_add</span>
+</button>
+<script>
+        // Simple interactivity for Accordion
+        document.querySelectorAll('button.group').forEach(button => {
+            button.addEventListener('click', () => {
+                const icon = button.querySelector('.material-symbols-outlined');
+                const content = button.nextElementSibling;
+                const isHidden = content.classList.contains('hidden');
+                
+                if (isHidden) {
+                    content.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    content.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+    </script>
+</body></html>
