@@ -41,3 +41,4 @@ Toàn bộ tài liệu đặc tả đã được khởi tạo trong thư mục `
 * **Xây dựng API Backend**: Hiện thực hóa các API được định nghĩa trong [api.md](file:///Users/hongtam/Downloads/dự%20án%20nhỏ%20mới%20ai/khoahoc/tho/docs/api.md) bằng Node.js / NestJS hoặc Go.
 
 *Chúc bạn xây dựng thành công kho tàng thi ca Thi Viện mới đầy chất thơ và nghệ thuật!*
+npx ts-node scripts/scrape.ts --limit=500 --delay=800
