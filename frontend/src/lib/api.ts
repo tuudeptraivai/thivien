@@ -10,6 +10,7 @@ import type {
   DictionaryEntry,
   PoemFilters,
   AuthorFilters,
+  User,
 } from "./types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api/v1";
@@ -45,10 +46,15 @@ function buildParams(obj: Record<string, unknown>): Record<string, string> {
 // Auth
 // ------------------------------------------------
 
-export async function login(usernameOrEmail: string, password: string) {
-  const { data } = await apiClient.post<ApiResponse<{ user: Author; token: string }>>(
+export interface LoginResponse {
+  user: User;
+  access_token: string;
+}
+
+export async function login(email: string, password: string): Promise<LoginResponse> {
+  const { data } = await apiClient.post<ApiResponse<LoginResponse>>(
     "/auth/login",
-    { username_or_email: usernameOrEmail, password }
+    { email, password }
   );
   return data.data;
 }
@@ -58,13 +64,16 @@ export async function register(payload: {
   email: string;
   password: string;
   display_name: string;
-}) {
-  const { data } = await apiClient.post("/auth/register", payload);
+}): Promise<LoginResponse> {
+  const { data } = await apiClient.post<ApiResponse<LoginResponse>>(
+    "/auth/register",
+    payload
+  );
   return data.data;
 }
 
-export async function getMe() {
-  const { data } = await apiClient.get("/auth/me");
+export async function getMe(): Promise<User> {
+  const { data } = await apiClient.get<ApiResponse<User>>("/auth/me");
   return data.data;
 }
 
