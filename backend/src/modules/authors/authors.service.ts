@@ -17,7 +17,7 @@ export class AuthorsService {
   constructor(@InjectRepository(Author) private authorRepo: Repository<Author>) {}
 
   async findAll(query: QueryAuthorDto) {
-    const { page = 1, limit = 20, search, country_id, era_id, verified } = query;
+    const { page = 1, limit = 20, search, country_id, era_id, verified, letter } = query;
     const skip = (page - 1) * limit;
 
     const qb = this.authorRepo.createQueryBuilder('a')
@@ -26,7 +26,10 @@ export class AuthorsService {
       .loadRelationCountAndMap('a.poemCount', 'a.poems');
 
     if (search) {
-      qb.andWhere('a.name ILIKE :search', { search: `%${search}%` });
+      qb.andWhere('a.name LIKE :search', { search: `%${search}%` });
+    }
+    if (letter) {
+      qb.andWhere('a.name LIKE :letter', { letter: `${letter}%` });
     }
     if (country_id) qb.andWhere('a.countryId = :country_id', { country_id });
     if (era_id) qb.andWhere('a.eraId = :era_id', { era_id });
@@ -51,12 +54,39 @@ export class AuthorsService {
   async findBySlug(slug: string) {
     const author = await this.authorRepo.findOne({
       where: { slug },
-      relations: ['country', 'era', 'poems', 'poems.category'],
+      relations: ['country', 'era'],
     });
     if (!author) throw new NotFoundException('Không tìm thấy tác giả');
+
+    const poemCount = await this.authorRepo
+      .createQueryBuilder('a')
+      .leftJoin('a.poems', 'p')
+      .where('a.id = :id', { id: author.id })
+      .select('COUNT(p.id)', 'cnt')
+      .getRawOne()
+      .then((r) => parseInt(r?.cnt ?? '0'));
+
     author.viewCount++;
     await this.authorRepo.save(author);
-    return { success: true, data: author };
+
+    return {
+      success: true,
+      data: {
+        id: author.id,
+        name: author.name,
+        slug: author.slug,
+        birth_year: author.birthYear,
+        death_year: author.deathYear,
+        country: author.country?.name ?? null,
+        country_id: author.countryId,
+        era: author.era?.name ?? null,
+        era_id: author.eraId,
+        portrait_url: author.portraitUrl,
+        biography: author.biography,
+        poem_count: poemCount,
+        is_verified: author.isVerified,
+      },
+    };
   }
 
   async create(dto: CreateAuthorDto, user: User) {

@@ -9,6 +9,7 @@ export const MOCK_POEMS: Poem[] = [
     category: { id: 1, name: "Truyện thơ Nôm", slug: "truyen-tho-nom" },
     view_count: 142850,
     is_member_poem: false,
+    like_count: 0,
     excerpt:
       "Trăm năm trong cõi người ta,\nChữ tài chữ mệnh khéo là ghét nhau.\nTrải qua một cuộc bể dâu,\nNhững điều trông thấy mà đau đớn lòng.",
   },
@@ -20,6 +21,7 @@ export const MOCK_POEMS: Poem[] = [
     category: { id: 2, name: "Cáo văn", slug: "cao-van" },
     view_count: 98420,
     is_member_poem: false,
+    like_count: 0,
     excerpt:
       "Việc nhân nghĩa cốt ở yên dân,\nQuân điếu phạt trước lo trừ bạo.",
   },
@@ -31,6 +33,7 @@ export const MOCK_POEMS: Poem[] = [
     category: { id: 3, name: "Đường thi", slug: "duong-thi" },
     view_count: 87500,
     is_member_poem: false,
+    like_count: 0,
     excerpt: "床前明月光，\n疑是地上霜。\n舉頭望明月，\n低頭思故鄉。",
   },
   {
@@ -41,6 +44,7 @@ export const MOCK_POEMS: Poem[] = [
     category: { id: 4, name: "Thơ Đường luật", slug: "duong-luat" },
     view_count: 74200,
     is_member_poem: false,
+    like_count: 0,
     excerpt:
       "Bước tới đèo Ngang, bóng xế tà,\nCỏ cây chen đá, lá chen hoa.\nLom khom dưới núi, tiều vài chú,\nLác đác bên sông, rợ mấy nhà.",
   },
@@ -52,6 +56,7 @@ export const MOCK_POEMS: Poem[] = [
     category: { id: 4, name: "Thơ Đường luật", slug: "duong-luat" },
     view_count: 65100,
     is_member_poem: false,
+    like_count: 0,
     excerpt:
       "Quanh năm buôn bán ở mom sông,\nNuôi đủ năm con với một chồng.",
   },
@@ -63,6 +68,7 @@ export const MOCK_POEMS: Poem[] = [
     category: { id: 5, name: "Thơ mới", slug: "tho-moi" },
     view_count: 59800,
     is_member_poem: false,
+    like_count: 0,
     excerpt:
       "Sao anh không về chơi thôn Vĩ?\nNhìn nắng hàng cau nắng mới lên.",
   },
@@ -74,6 +80,7 @@ export const MOCK_POEMS: Poem[] = [
     category: { id: 5, name: "Thơ mới", slug: "tho-moi" },
     view_count: 43200,
     is_member_poem: false,
+    like_count: 0,
     excerpt:
       "Đưa người ta không đưa qua sông,\nSao có tiếng sóng ở trong lòng?",
   },
@@ -85,6 +92,7 @@ export const MOCK_POEMS: Poem[] = [
     category: { id: 6, name: "Thơ thành viên", slug: "tho-thanh-vien" },
     view_count: 1240,
     is_member_poem: true,
+    like_count: 0,
     excerpt:
       "Lá vàng rơi nhẹ cuối thu,\nGió mang hơi lạnh vào trong giấc mơ.",
   },

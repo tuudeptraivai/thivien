@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Public } from '../../common/decorators/public.decorator';
+import { OptionalAuth } from '../../common/decorators/optional-auth.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { User } from '../../entities/user.entity';
 
@@ -27,7 +28,7 @@ export class CommentsController {
     return this.commentsService.findAll(entityType, +entityId, +page, +limit);
   }
 
-  @Public()
+  @OptionalAuth()
   @Post()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Đăng bình luận (hỗ trợ khách vãng lai)' })

@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { PoemCard } from "@/components/poem/PoemCard";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_AUTHORS, MOCK_POEMS } from "@/lib/mockData";
-import { notFound } from "next/navigation";
+import {
+  getAuthorDetail,
+  getAuthorPoems,
+  getRelatedAuthors,
+} from "@/lib/server-api";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -11,14 +15,25 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const author = MOCK_AUTHORS.find((a) => a.slug === slug);
+  const author = await getAuthorDetail(slug);
   return { title: author?.name ?? "Tác giả" };
 }
 
 export default async function AuthorDetailPage({ params }: Props) {
   const { slug } = await params;
-  const author = MOCK_AUTHORS.find((a) => a.slug === slug) ?? MOCK_AUTHORS[0];
-  const poems = MOCK_POEMS.filter((p) => p.author.slug === slug || p.author.id === author.id);
+
+  const [author, poemsResult] = await Promise.all([
+    getAuthorDetail(slug),
+    // poems fetched after we know authorId — handled below
+    Promise.resolve(null),
+  ]);
+
+  if (!author) notFound();
+
+  const [{ data: poems }, relatedAuthors] = await Promise.all([
+    getAuthorPoems(author.id, 1, 8),
+    getRelatedAuthors(author.era_id, author.id, 5),
+  ]);
 
   const TIMELINE = [
     author.birth_year && { year: author.birth_year, event: "Năm sinh" },
@@ -42,7 +57,12 @@ export default async function AuthorDetailPage({ params }: Props) {
             className="w-20 h-20 rounded-full shrink-0 flex items-center justify-center text-3xl font-bold text-white"
             style={{ background: "var(--color-lacquer-red)", fontFamily: "var(--font-lora)" }}
           >
-            {author.name.charAt(0)}
+            {author.portrait_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={author.portrait_url} alt={author.name} className="w-full h-full rounded-full object-cover" />
+            ) : (
+              author.name.charAt(0)
+            )}
           </div>
 
           <div className="flex-1">
@@ -53,8 +73,8 @@ export default async function AuthorDetailPage({ params }: Props) {
               {author.name}
             </h1>
             <div className="flex flex-wrap items-center gap-2 mb-4">
-              <Badge variant="default">{author.country}</Badge>
-              <Badge variant="default">{author.era}</Badge>
+              {author.country && <Badge variant="default">{author.country}</Badge>}
+              {author.era && <Badge variant="default">{author.era}</Badge>}
               <Badge variant="green">{author.poem_count} tác phẩm</Badge>
               {author.is_verified && <Badge variant="red">✓ Xác thực</Badge>}
               {author.birth_year && (
@@ -96,46 +116,50 @@ export default async function AuthorDetailPage({ params }: Props) {
           {/* LEFT sidebar */}
           <aside className="space-y-6">
             {/* Timeline */}
-            <div className="card p-5">
-              <h3 className="text-label-caps mb-4" style={{ color: "var(--color-bamboo-green)" }}>
-                DÒNG THỜI GIAN
-              </h3>
-              <ol className="relative border-l pl-4 space-y-4" style={{ borderColor: "var(--color-border-tan)" }}>
-                {TIMELINE.map((t) => (
-                  <li key={t.year} className="relative">
-                    <span
-                      className="absolute -left-[1.15rem] top-1 w-3 h-3 rounded-full border-2"
-                      style={{ background: "var(--card-bg)", borderColor: "var(--color-lacquer-red)" }}
-                    />
-                    <p className="text-xs font-semibold" style={{ color: "var(--color-lacquer-red)", fontFamily: "var(--font-inter)" }}>
-                      {t.year}
-                    </p>
-                    <p className="text-sm" style={{ color: "var(--fg)", fontFamily: "var(--font-inter)" }}>
-                      {t.event}
-                    </p>
-                  </li>
-                ))}
-              </ol>
-            </div>
-
-            {/* Related groups */}
-            <div className="card p-5">
-              <h3 className="text-label-caps mb-3" style={{ color: "var(--color-bamboo-green)" }}>
-                CÁC TÁC GIẢ CÙNG THỜI
-              </h3>
-              <div className="flex flex-wrap gap-1.5">
-                {MOCK_AUTHORS.filter((a) => a.id !== author.id).slice(0, 5).map((a) => (
-                  <Link
-                    key={a.id}
-                    href={`/tac-gia/${a.slug}`}
-                    className="text-xs px-2.5 py-1 rounded-full border transition-colors hover:border-[var(--color-lacquer-red)] hover:text-[var(--color-lacquer-red)]"
-                    style={{ borderColor: "var(--color-border-tan)", color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}
-                  >
-                    {a.name}
-                  </Link>
-                ))}
+            {TIMELINE.length > 0 && (
+              <div className="card p-5">
+                <h3 className="text-label-caps mb-4" style={{ color: "var(--color-bamboo-green)" }}>
+                  DÒNG THỜI GIAN
+                </h3>
+                <ol className="relative border-l pl-4 space-y-4" style={{ borderColor: "var(--color-border-tan)" }}>
+                  {TIMELINE.map((t) => (
+                    <li key={t.year + t.event} className="relative">
+                      <span
+                        className="absolute -left-[1.15rem] top-1 w-3 h-3 rounded-full border-2"
+                        style={{ background: "var(--card-bg)", borderColor: "var(--color-lacquer-red)" }}
+                      />
+                      <p className="text-xs font-semibold" style={{ color: "var(--color-lacquer-red)", fontFamily: "var(--font-inter)" }}>
+                        {t.year}
+                      </p>
+                      <p className="text-sm" style={{ color: "var(--fg)", fontFamily: "var(--font-inter)" }}>
+                        {t.event}
+                      </p>
+                    </li>
+                  ))}
+                </ol>
               </div>
-            </div>
+            )}
+
+            {/* Related authors */}
+            {relatedAuthors.length > 0 && (
+              <div className="card p-5">
+                <h3 className="text-label-caps mb-3" style={{ color: "var(--color-bamboo-green)" }}>
+                  CÁC TÁC GIẢ CÙNG THỜI
+                </h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {relatedAuthors.map((a) => (
+                    <Link
+                      key={a.id}
+                      href={`/tac-gia/${a.slug}`}
+                      className="text-xs px-2.5 py-1 rounded-full border transition-colors hover:border-[var(--color-lacquer-red)] hover:text-[var(--color-lacquer-red)]"
+                      style={{ borderColor: "var(--color-border-tan)", color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}
+                    >
+                      {a.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </aside>
 
           {/* RIGHT content */}
@@ -158,31 +182,26 @@ export default async function AuthorDetailPage({ params }: Props) {
               ))}
             </div>
 
-            {/* Search within author */}
-            <div className="search-pill flex items-center gap-2 px-4 py-2 mb-6 max-w-sm">
-              <svg className="w-4 h-4 shrink-0" style={{ color: "var(--color-muted-gray)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
-              </svg>
-              <input
-                placeholder={`Tìm trong thơ ${author.name}...`}
-                className="bg-transparent outline-none text-sm flex-1"
-                style={{ fontFamily: "var(--font-inter)", color: "var(--fg)" }}
-              />
-            </div>
-
             {poems.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {poems.map((p) => (
-                  <PoemCard key={p.id} poem={p} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {poems.map((p) => (
+                    <PoemCard key={p.id} poem={p} />
+                  ))}
+                </div>
+                <div className="text-center mt-6">
+                  <Link
+                    href={`/tho?author_id=${author.id}`}
+                    className="btn-primary px-6 py-2.5 text-sm inline-block"
+                  >
+                    Xem tất cả {author.poem_count} bài →
+                  </Link>
+                </div>
+              </>
             ) : (
-              /* Fallback: show all poems */
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {MOCK_POEMS.slice(0, 4).map((p) => (
-                  <PoemCard key={p.id} poem={p} />
-                ))}
-              </div>
+              <p className="text-center py-16" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-lora)" }}>
+                Chưa có bài thơ nào được thêm vào.
+              </p>
             )}
           </section>
         </div>

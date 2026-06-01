@@ -39,4 +39,9 @@ export class QueryAuthorDto {
   @Transform(({ value }) => value === 'true')
   @IsBoolean()
   verified?: boolean;
+
+  @ApiPropertyOptional({ description: 'Lọc tên bắt đầu bằng chữ cái' })
+  @IsOptional()
+  @IsString()
+  letter?: string;
 }

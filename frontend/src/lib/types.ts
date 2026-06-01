@@ -26,7 +26,9 @@ export interface Author {
   birth_year?: string;
   death_year?: string;
   country: string;
+  country_id?: number;
   era: string;
+  era_id?: number;
   portrait_url?: string;
   poem_count: number;
   is_verified: boolean;
@@ -90,6 +92,7 @@ export interface Poem {
   author: Pick<Author, "id" | "name" | "slug">;
   category: Category;
   view_count: number;
+  like_count: number;
   source_info?: string;
   is_member_poem: boolean;
   versions?: PoemVersion[];
@@ -107,6 +110,21 @@ export interface Comment {
   author_name: string;
   created_at: string;
   replies?: Comment[];
+}
+
+export interface CommentAuthor {
+  id?: number;
+  display_name: string;
+  avatar_url?: string;
+  is_guest?: boolean;
+}
+
+export interface CommentItem {
+  id: number;
+  content: string;
+  author: CommentAuthor;
+  created_at: string;
+  replies: CommentItem[];
 }
 
 export interface ForumTopic {
@@ -175,6 +193,7 @@ export interface AuthorFilters {
   country_id?: number;
   era_id?: number;
   verified?: boolean;
+  letter?: string;
   page?: number;
   limit?: number;
 }

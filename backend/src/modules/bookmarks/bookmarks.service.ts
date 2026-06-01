@@ -34,6 +34,11 @@ export class BookmarksService {
     };
   }
 
+  async check(userId: number, poemId: number) {
+    const existing = await this.bookmarkRepo.findOne({ where: { userId, poemId } });
+    return { success: true, data: { bookmarked: Boolean(existing) } };
+  }
+
   async toggle(userId: number, poemId: number) {
     const poem = await this.poemRepo.findOne({ where: { id: poemId } });
     if (!poem) throw new NotFoundException('Không tìm thấy bài thơ');

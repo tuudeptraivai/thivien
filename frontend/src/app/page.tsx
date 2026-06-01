@@ -1,22 +1,22 @@
 import Link from "next/link";
 import { PoemCard } from "@/components/poem/PoemCard";
-import { Badge } from "@/components/ui/Badge";
-import { MOCK_POEMS, MOCK_AUTHORS, MOCK_STATS } from "@/lib/mockData";
 import { formatNumber } from "@/lib/utils";
 import HeroSearch from "@/components/home/HeroSearch";
+import {
+  getHomepagePoems,
+  getFeaturedPoem,
+  getTopAuthors,
+  getHomeStats,
+} from "@/lib/server-api";
 import type { Poem } from "@/lib/types";
+
+export const revalidate = 60;
 
 const CATEGORIES = [
   { label: "Thơ Đường 🇨🇳", href: "/tho?category=duong-thi" },
   { label: "Thơ Nôm 🇻🇳",   href: "/tho?category=tho-nom" },
   { label: "Thơ mới ✍️",    href: "/tho?category=tho-moi" },
   { label: "Thành viên 🌱", href: "/sang-tac" },
-];
-
-const ANNIVERSARIES = [
-  { name: "Nguyễn Du",    note: "Sinh ngày 3/1/1766" },
-  { name: "Hàn Mặc Tử",  note: "Mất ngày 11/11/1940" },
-  { name: "Xuân Diệu",   note: "Nhà thơ mới tiêu biểu" },
 ];
 
 function PoemFeed({ poems }: { poems: Poem[] }) {
@@ -60,9 +60,13 @@ function PoemFeed({ poems }: { poems: Poem[] }) {
   );
 }
 
-export default function HomePage() {
-  const featured = MOCK_POEMS[0];
-  const recentPoems = MOCK_POEMS.slice(0, 6);
+export default async function HomePage() {
+  const [featured, recentPoems, topAuthors, stats] = await Promise.all([
+    getFeaturedPoem(),
+    getHomepagePoems(),
+    getTopAuthors(),
+    getHomeStats(),
+  ]);
 
   return (
     <div style={{ background: "var(--color-background-parchment)" }}>
@@ -75,7 +79,7 @@ export default function HomePage() {
           className="text-display mb-8"
           style={{ fontFamily: "var(--font-lora)", color: "var(--fg)" }}
         >
-          {formatNumber(MOCK_STATS.total_poems)} tác phẩm thi ca
+          {formatNumber(stats.total_poems)} tác phẩm thi ca
         </h1>
 
         <HeroSearch />
@@ -123,11 +127,11 @@ export default function HomePage() {
             </blockquote>
             <div className="flex items-center gap-3">
               <Link
-                href={`/tac-gia/${featured.author.slug}`}
+                href={`/tac-gia/${featured.author?.slug ?? "#"}`}
                 className="font-semibold hover:underline"
                 style={{ color: "var(--color-lacquer-red)", fontFamily: "var(--font-lora)" }}
               >
-                {featured.author.name}
+                {featured.author?.name ?? "Khuyết danh"}
               </Link>
               <span style={{ color: "var(--color-muted-gray)" }}>—</span>
               <Link
@@ -164,10 +168,10 @@ export default function HomePage() {
               </h3>
               <div className="space-y-3">
                 {[
-                  { icon: "📚", value: formatNumber(MOCK_STATS.total_poems), label: "tác phẩm" },
-                  { icon: "👤", value: formatNumber(MOCK_STATS.total_authors), label: "tác giả" },
-                  { icon: "🌏", value: String(MOCK_STATS.total_countries), label: "quốc gia" },
-                  { icon: "✍️", value: formatNumber(MOCK_STATS.total_members), label: "thành viên" },
+                  { icon: "📚", value: formatNumber(stats.total_poems), label: "tác phẩm" },
+                  { icon: "👤", value: formatNumber(stats.total_authors), label: "tác giả" },
+                  { icon: "🌏", value: String(stats.total_countries), label: "quốc gia" },
+                  { icon: "✍️", value: formatNumber(stats.total_members), label: "thành viên" },
                 ].map((s) => (
                   <div key={s.label} className="flex items-center justify-between">
                     <span className="text-sm" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
@@ -184,33 +188,13 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Anniversaries */}
-            <div className="card p-5">
-              <h3 className="text-label-caps mb-4" style={{ color: "var(--color-bamboo-green)" }}>
-                KỶ NIỆM NGÀY NÀY
-              </h3>
-              <ul className="space-y-3">
-                {ANNIVERSARIES.map((a) => (
-                  <li key={a.name} className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full shrink-0 flex items-center justify-center text-sm font-semibold text-white" style={{ background: "var(--color-lacquer-red)" }}>
-                      {a.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium" style={{ fontFamily: "var(--font-lora)", color: "var(--fg)" }}>{a.name}</p>
-                      <p className="text-xs" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>{a.note}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
             {/* Top authors */}
             <div className="card p-5">
               <h3 className="text-label-caps mb-4" style={{ color: "var(--color-bamboo-green)" }}>
                 TÁC GIẢ NỔI BẬT
               </h3>
               <ul className="space-y-2">
-                {MOCK_AUTHORS.slice(0, 4).map((a) => (
+                {topAuthors.map((a) => (
                   <li key={a.id}>
                     <Link href={`/tac-gia/${a.slug}`} className="flex items-center gap-2 group py-1">
                       <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold text-white shrink-0" style={{ background: "var(--color-lacquer-red)" }}>

@@ -11,6 +11,9 @@ import type {
   PoemFilters,
   AuthorFilters,
   User,
+  Era,
+  Country,
+  Translation,
 } from "./types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api/v1";
@@ -135,6 +138,66 @@ export async function searchPoems(
 }
 
 // ------------------------------------------------
+// Translations
+// ------------------------------------------------
+
+export async function submitTranslation(
+  poemId: number,
+  versionId: number,
+  payload: {
+    content: string;
+    translation_title?: string;
+    translation_type?: string;
+  }
+): Promise<Translation> {
+  const { data } = await apiClient.post<ApiResponse<Translation>>(
+    `/poems/${poemId}/versions/${versionId}/translations`,
+    payload
+  );
+  return data.data;
+}
+
+// ------------------------------------------------
+// Likes
+// ------------------------------------------------
+
+export async function checkLiked(poemId: number): Promise<boolean> {
+  const { data } = await apiClient.get<ApiResponse<{ liked: boolean }>>(
+    `/poems/${poemId}/liked`
+  );
+  return data.data.liked;
+}
+
+export async function likePoem(
+  poemId: number
+): Promise<{ liked: boolean; like_count: number; message: string }> {
+  const { data } = await apiClient.post<
+    ApiResponse<null> & { liked: boolean; like_count: number; message: string }
+  >(`/poems/${poemId}/like`);
+  return { liked: data.liked, like_count: data.like_count, message: data.message };
+}
+
+// ------------------------------------------------
+// Bookmarks
+// ------------------------------------------------
+
+export async function checkBookmark(poemId: number): Promise<boolean> {
+  const { data } = await apiClient.get<ApiResponse<{ bookmarked: boolean }>>(
+    `/bookmarks/check/${poemId}`
+  );
+  return data.data.bookmarked;
+}
+
+export async function toggleBookmark(
+  poemId: number
+): Promise<{ bookmarked: boolean; message: string }> {
+  const { data } = await apiClient.post<
+    ApiResponse<null> & { bookmarked: boolean; message: string }
+  >(`/bookmarks/${poemId}`);
+  return { bookmarked: data.bookmarked, message: data.message };
+}
+
+// ------------------------------------------------
 // Comments
 // ------------------------------------------------
 
@@ -178,6 +241,20 @@ export async function getForumTopics(page = 1): Promise<{
 
 export async function getForumTopic(slug: string): Promise<ForumTopic> {
   const { data } = await apiClient.get<ApiResponse<ForumTopic>>(`/forum/topics/${slug}`);
+  return data.data;
+}
+
+// ------------------------------------------------
+// Eras & Countries
+// ------------------------------------------------
+
+export async function getEras(): Promise<Era[]> {
+  const { data } = await apiClient.get<ApiResponse<Era[]>>("/eras");
+  return data.data;
+}
+
+export async function getCountries(): Promise<Country[]> {
+  const { data } = await apiClient.get<ApiResponse<Country[]>>("/countries");
   return data.data;
 }
 
