@@ -16,6 +16,7 @@ import { User } from './user.entity';
 import { Comment } from './comment.entity';
 import { Bookmark } from './bookmark.entity';
 import { PoemAnnotation } from './poem-annotation.entity';
+import { PoemLike } from './poem-like.entity';
 
 export enum PoemStatus {
   DRAFT = 'draft',
@@ -48,6 +49,9 @@ export class Poem {
 
   @Column({ name: 'view_count', type: 'int', default: 0 })
   viewCount: number;
+
+  @Column({ name: 'like_count', type: 'int', default: 0 })
+  likeCount: number;
 
   @Column({ name: 'is_member_poem', default: false })
   isMemberPoem: boolean;
@@ -88,6 +92,9 @@ export class Poem {
 
   @OneToMany(() => Bookmark, (bookmark) => bookmark.poem)
   bookmarks: Bookmark[];
+
+  @OneToMany(() => PoemLike, (like) => like.poem)
+  likes: PoemLike[];
 
   @OneToMany(() => PoemAnnotation, (pa) => pa.poem)
   poemAnnotations: PoemAnnotation[];

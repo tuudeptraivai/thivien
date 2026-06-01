@@ -21,9 +21,9 @@ export function PoemCard({ poem, showExcerpt = true }: PoemCardProps) {
 
         <p className="text-sm mb-3" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
           <span style={{ color: "var(--color-lacquer-red)" }}>
-            {poem.author.name}
+            {poem.author?.name ?? "Khuyết danh"}
           </span>
-          {" · "}{poem.category.name}
+          {poem.category && <>{" · "}{poem.category.name}</>}
         </p>
 
         {showExcerpt && poem.excerpt && (
@@ -40,7 +40,7 @@ export function PoemCard({ poem, showExcerpt = true }: PoemCardProps) {
         )}
 
         <div className="flex items-center justify-between mt-auto">
-          <Badge variant="default">{poem.category.name}</Badge>
+          {poem.category && <Badge variant="default">{poem.category.name}</Badge>}
           <span
             className="flex items-center gap-1 text-xs"
             style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}

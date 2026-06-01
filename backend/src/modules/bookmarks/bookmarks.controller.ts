@@ -20,6 +20,12 @@ export class BookmarksController {
     return this.bookmarksService.getMyBookmarks(user.id, +page, +limit);
   }
 
+  @Get('check/:poem_id')
+  @ApiOperation({ summary: 'Kiểm tra bài thơ đã lưu chưa' })
+  check(@Param('poem_id') poemId: string, @CurrentUser() user: User) {
+    return this.bookmarksService.check(user.id, +poemId);
+  }
+
   @Post(':poem_id')
   @ApiOperation({ summary: 'Toggle lưu/bỏ lưu bài thơ' })
   toggle(@Param('poem_id') poemId: string, @CurrentUser() user: User) {

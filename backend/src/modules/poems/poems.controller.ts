@@ -37,6 +37,20 @@ export class PoemsController {
     return this.poemsService.findBySlug(slug);
   }
 
+  @Get(':id/liked')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kiểm tra đã yêu thích bài thơ chưa' })
+  checkLiked(@Param('id') id: string, @CurrentUser() user: User) {
+    return this.poemsService.checkLiked(+id, user.id);
+  }
+
+  @Post(':id/like')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Toggle yêu thích / bỏ yêu thích bài thơ' })
+  toggleLike(@Param('id') id: string, @CurrentUser() user: User) {
+    return this.poemsService.toggleLike(+id, user.id);
+  }
+
   @Post()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Đăng bài thơ mới' })

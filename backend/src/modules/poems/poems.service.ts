@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import slugify from 'slugify';
 import { Poem, PoemStatus } from '../../entities/poem.entity';
 import { PoemVersion } from '../../entities/poem-version.entity';
+import { PoemLike } from '../../entities/poem-like.entity';
 import { CreatePoemDto } from './dto/create-poem.dto';
 import { UpdatePoemDto } from './dto/update-poem.dto';
 import { QueryPoemDto } from './dto/query-poem.dto';
@@ -18,6 +19,7 @@ export class PoemsService {
   constructor(
     @InjectRepository(Poem) private poemRepo: Repository<Poem>,
     @InjectRepository(PoemVersion) private versionRepo: Repository<PoemVersion>,
+    @InjectRepository(PoemLike) private likeRepo: Repository<PoemLike>,
   ) {}
 
   async findAll(query: QueryPoemDto) {
@@ -28,6 +30,7 @@ export class PoemsService {
       .leftJoinAndSelect('p.author', 'author')
       .leftJoinAndSelect('p.category', 'category')
       .leftJoinAndSelect('p.era', 'era')
+      .leftJoinAndSelect('p.versions', 'v', 'v.isPrimary = true')
       .where('p.status = :status', { status: PoemStatus.PUBLISHED });
 
     if (search) {
@@ -89,6 +92,7 @@ export class PoemsService {
         author: { id: poem.author.id, name: poem.author.name, slug: poem.author.slug },
         category: poem.category ? { id: poem.category.id, name: poem.category.name } : null,
         view_count: poem.viewCount,
+        like_count: poem.likeCount,
         source_info: poem.sourceInfo,
         is_member_poem: poem.isMemberPoem,
         versions: poem.versions.map((v) => ({
@@ -193,7 +197,35 @@ export class PoemsService {
     return { success: true, message: 'Xóa bài thơ thành công' };
   }
 
+  async checkLiked(poemId: number, userId: number) {
+    const existing = await this.likeRepo.findOne({ where: { poemId, userId } });
+    return { success: true, data: { liked: Boolean(existing) } };
+  }
+
+  async toggleLike(poemId: number, userId: number) {
+    const poem = await this.poemRepo.findOne({ where: { id: poemId } });
+    if (!poem) throw new NotFoundException('Không tìm thấy bài thơ');
+
+    const existing = await this.likeRepo.findOne({ where: { poemId, userId } });
+    if (existing) {
+      await this.likeRepo.remove(existing);
+      poem.likeCount = Math.max(0, poem.likeCount - 1);
+      await this.poemRepo.save(poem);
+      return { success: true, liked: false, like_count: poem.likeCount, message: 'Đã bỏ yêu thích' };
+    }
+
+    await this.likeRepo.save(this.likeRepo.create({ poemId, userId }));
+    poem.likeCount++;
+    await this.poemRepo.save(poem);
+    return { success: true, liked: true, like_count: poem.likeCount, message: 'Đã thêm vào yêu thích' };
+  }
+
   private formatPoemList(p: Poem) {
+    const primaryVersion = p.versions?.find((v) => v.isPrimary) ?? p.versions?.[0];
+    const excerpt = primaryVersion?.content
+      ? primaryVersion.content.split('\n').slice(0, 4).join('\n')
+      : undefined;
+
     return {
       id: p.id,
       title: p.title,
@@ -201,8 +233,10 @@ export class PoemsService {
       author: p.author ? { id: p.author.id, name: p.author.name, slug: p.author.slug } : null,
       category: p.category ? { id: p.category.id, name: p.category.name } : null,
       view_count: p.viewCount,
+      like_count: p.likeCount,
       is_member_poem: p.isMemberPoem,
       created_at: p.createdAt,
+      excerpt,
     };
   }
 

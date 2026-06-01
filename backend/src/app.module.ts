@@ -19,6 +19,7 @@ import { BookmarksModule } from './modules/bookmarks/bookmarks.module';
 import { CountriesModule } from './modules/countries/countries.module';
 import { ErasModule } from './modules/eras/eras.module';
 import { PoemCategoriesModule } from './modules/poem-categories/poem-categories.module';
+import { StatisticsModule } from './modules/statistics/statistics.module';
 
 import { User } from './entities/user.entity';
 import { Author } from './entities/author.entity';
@@ -35,6 +36,7 @@ import { Bookmark } from './entities/bookmark.entity';
 import { Country } from './entities/country.entity';
 import { Era } from './entities/era.entity';
 import { PoemCategory } from './entities/poem-category.entity';
+import { PoemLike } from './entities/poem-like.entity';
 
 @Module({
   imports: [
@@ -55,7 +57,7 @@ import { PoemCategory } from './entities/poem-category.entity';
           User, Author, Poem, PoemVersion, Translation,
           Annotation, PoemAnnotation, Comment,
           ForumCategory, ForumTopic, ForumPost,
-          Bookmark, Country, Era, PoemCategory,
+          Bookmark, Country, Era, PoemCategory, PoemLike,
         ],
         synchronize: config.get<boolean>('DB_SYNCHRONIZE', false),
         logging: config.get<boolean>('DB_LOGGING', false),
@@ -74,6 +76,7 @@ import { PoemCategory } from './entities/poem-category.entity';
     CountriesModule,
     ErasModule,
     PoemCategoriesModule,
+    StatisticsModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
