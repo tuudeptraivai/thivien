@@ -1,231 +1,202 @@
 "use client";
-import { useState } from "react";
-import type { Metadata } from "next";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useStore } from "@/stores/useStore";
+import { createPoem, getAuthors } from "@/lib/api";
+import type { Author } from "@/lib/types";
 
-const POEM_STYLES = ["Lục bát (6-8 âm)", "Đường luật thất ngôn", "Tứ tuyệt", "Thơ mới tự do"];
-const RHYME_SUGGESTIONS: Record<string, string[]> = {
-  hiên: ["yên", "thiền", "miền", "duyên", "niềm", "huyền"],
-  hương: ["thương", "vương", "mường", "phương", "đường", "sương"],
-  mây: ["tây", "bay", "say", "xây", "ngày", "đầy"],
-};
+type AuthorMode = "self" | "existing" | "custom";
 
 export default function TroLyPage() {
-  const [title, setTitle] = useState("Mưa mùa xuân");
-  const [style, setStyle] = useState(POEM_STYLES[0]);
-  const [lines, setLines] = useState([
-    "Mưa bay lất phất ngoài hiên",
-    "Giọt sương đọng lại buồn riêng nỗi niềm",
-  ]);
+  const user = useStore((s) => s.user);
+  const router = useRouter();
 
-  function countSyllables(line: string) {
-    return line.trim().split(/\s+/).filter(Boolean).length;
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+
+  const [authorMode, setAuthorMode] = useState<AuthorMode>("self");
+  const [authors, setAuthors] = useState<Author[]>([]);
+  const [selectedAuthorId, setSelectedAuthorId] = useState<string>("");
+  const [customAuthorName, setCustomAuthorName] = useState("");
+
+  const [saving, setSaving] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    getAuthors({ limit: 500 })
+      .then((r) => active && setAuthors(r.data))
+      .catch(() => active && setAuthors([]));
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  async function publish() {
+    if (!user) {
+      setFeedback({ type: "err", text: "Vui lòng đăng nhập để đăng bài." });
+      return;
+    }
+    if (!title.trim()) {
+      setFeedback({ type: "err", text: "Vui lòng nhập tên tác phẩm." });
+      return;
+    }
+    if (!content.trim()) {
+      setFeedback({ type: "err", text: "Vui lòng nhập nội dung bài thơ." });
+      return;
+    }
+
+    const author: { author_id?: number; author_name?: string } = {};
+    if (authorMode === "existing") {
+      if (!selectedAuthorId) {
+        setFeedback({ type: "err", text: "Vui lòng chọn một tác giả." });
+        return;
+      }
+      author.author_id = Number(selectedAuthorId);
+    } else if (authorMode === "custom") {
+      if (!customAuthorName.trim()) {
+        setFeedback({ type: "err", text: "Vui lòng nhập tên tác giả." });
+        return;
+      }
+      author.author_name = customAuthorName.trim();
+    }
+
+    setSaving(true);
+    setFeedback(null);
+    try {
+      const created = await createPoem({
+        title: title.trim(),
+        content: content.trim(),
+        status: "published",
+        ...author,
+      });
+      // "Chính tôi" → mục Thơ sáng tác; gắn tác giả → trang bài thơ trong thư viện.
+      if (authorMode === "self") {
+        router.push("/sang-tac");
+      } else {
+        router.push(`/tho/${created.slug}`);
+      }
+      router.refresh();
+    } catch {
+      setFeedback({ type: "err", text: "Có lỗi xảy ra, vui lòng thử lại." });
+      setSaving(false);
+    }
   }
 
-  function getLastWord(line: string) {
-    const words = line.trim().split(/\s+/);
-    return words[words.length - 1]?.toLowerCase() ?? "";
-  }
-
-  const lastWord = getLastWord(lines[lines.length - 1] ?? "");
-  const rhymes = RHYME_SUGGESTIONS[lastWord] ?? ["yên", "thiền", "miền", "duyên", "niềm"];
-
-  function handleLineChange(i: number, value: string) {
-    setLines((prev) => {
-      const next = [...prev];
-      next[i] = value;
-      return next;
-    });
-  }
-
-  function addLine() {
-    setLines((prev) => [...prev, ""]);
-  }
+  const SELECT_STYLE = {
+    borderColor: "var(--color-border-tan)",
+    background: "transparent",
+    fontFamily: "var(--font-inter)",
+    color: "var(--fg)",
+  } as const;
 
   return (
     <div style={{ background: "#FAF9F6", minHeight: "100vh" }}>
-      <div className="max-w-[1280px] mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr_260px] gap-6 h-[calc(100vh-120px)]">
+      <div className="max-w-[760px] mx-auto px-4 py-10">
+        <div className="mb-6">
+          <p className="text-label-caps mb-2" style={{ color: "var(--color-bamboo-green)" }}>
+            SÁNG TÁC
+          </p>
+          <h1 className="text-headline-md" style={{ fontFamily: "var(--font-lora)", color: "var(--fg)" }}>
+            Viết bài mới
+          </h1>
+        </div>
 
-          {/* LEFT: drafts list */}
-          <aside className="card p-4 overflow-y-auto">
-            <h3 className="text-label-caps mb-4" style={{ color: "var(--color-bamboo-green)" }}>
-              BẢN THẢO
-            </h3>
-            <ul className="space-y-1 mb-4">
-              {[
-                { title: "Mưa mùa xuân", active: true },
-                { title: "Chiều vàng sông Hương", active: false },
-              ].map((d) => (
-                <li key={d.title}>
-                  <button
-                    className="w-full text-left px-3 py-2 rounded-md text-sm transition-colors"
-                    style={{
-                      fontFamily: "var(--font-inter)",
-                      background: d.active ? "rgba(142,36,36,0.08)" : "transparent",
-                      color: d.active ? "var(--color-lacquer-red)" : "var(--fg)",
-                      fontWeight: d.active ? 500 : 400,
-                    }}
-                  >
-                    📄 {d.title}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <button
-              className="w-full py-2 rounded-lg text-sm font-medium border-2 border-dashed transition-colors hover:border-[var(--color-bamboo-green)] hover:text-[var(--color-bamboo-green)]"
-              style={{ borderColor: "var(--color-border-tan)", color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}
-            >
-              + Bài mới
-            </button>
-          </aside>
+        {!user && (
+          <p className="text-sm mb-4" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
+            <Link href="/dang-nhap" style={{ color: "var(--color-lacquer-red)" }}>Đăng nhập</Link>{" "}
+            để đăng bài thơ lên cộng đồng.
+          </p>
+        )}
 
-          {/* CENTER: editor */}
-          <div
-            className="card flex flex-col overflow-hidden"
-            style={{ background: "#FFFFFF", border: "1.5px solid #D4C89A" }}
-          >
-            {/* Title */}
-            <div className="p-6 border-b" style={{ borderColor: "var(--color-border-tan)" }}>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Tựa đề bài thơ..."
-                className="w-full text-2xl outline-none bg-transparent font-semibold"
-                style={{ fontFamily: "var(--font-lora)", color: "var(--fg)" }}
-              />
-              <div className="flex items-center gap-3 mt-3">
-                <label className="text-xs" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
-                  Thể thơ:
-                </label>
+        <div className="card flex flex-col overflow-hidden" style={{ background: "#FFFFFF", border: "1.5px solid #D4C89A" }}>
+          {/* Title + author */}
+          <div className="p-6 border-b" style={{ borderColor: "var(--color-border-tan)" }}>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Tên tác phẩm..."
+              className="w-full text-2xl outline-none bg-transparent font-semibold"
+              style={{ fontFamily: "var(--font-lora)", color: "var(--fg)" }}
+            />
+            <div className="flex items-center gap-3 mt-4 flex-wrap">
+              <label className="text-xs" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
+                Tác giả:
+              </label>
+              <select
+                value={authorMode}
+                onChange={(e) => setAuthorMode(e.target.value as AuthorMode)}
+                className="text-sm border rounded-md px-2 py-1 outline-none"
+                style={SELECT_STYLE}
+              >
+                <option value="self">Chính tôi</option>
+                <option value="existing">Tác giả có sẵn</option>
+                <option value="custom">Tự điền tên tác giả</option>
+              </select>
+
+              {authorMode === "existing" && (
                 <select
-                  value={style}
-                  onChange={(e) => setStyle(e.target.value)}
-                  className="text-sm border rounded-md px-2 py-1 outline-none"
-                  style={{ borderColor: "var(--color-border-tan)", background: "transparent", fontFamily: "var(--font-inter)", color: "var(--fg)" }}
+                  value={selectedAuthorId}
+                  onChange={(e) => setSelectedAuthorId(e.target.value)}
+                  className="text-sm border rounded-md px-2 py-1 outline-none flex-1 min-w-[180px]"
+                  style={SELECT_STYLE}
                 >
-                  {POEM_STYLES.map((s) => (
-                    <option key={s}>{s}</option>
+                  <option value="">— Chọn tác giả —</option>
+                  {authors.map((a) => (
+                    <option key={a.id} value={a.id}>{a.name}</option>
                   ))}
                 </select>
-              </div>
-            </div>
+              )}
 
-            {/* Lines */}
-            <div className="flex-1 p-6 overflow-y-auto space-y-2">
-              {lines.map((line, i) => {
-                const count = countSyllables(line);
-                const expected = i % 2 === 0 ? 6 : 8;
-                const isOk = count === 0 || count === expected;
-                return (
-                  <div key={i} className="flex items-center gap-3">
-                    <textarea
-                      rows={1}
-                      value={line}
-                      onChange={(e) => handleLineChange(i, e.target.value)}
-                      placeholder={`Câu ${i + 1}...`}
-                      className="flex-1 resize-none outline-none bg-transparent text-lg leading-relaxed"
-                      style={{ fontFamily: "var(--font-lora)", color: "var(--fg)", fontStyle: "italic" }}
-                    />
-                    <span
-                      className="text-xs font-semibold px-2 py-0.5 rounded-full shrink-0"
-                      style={{
-                        background: isOk ? "rgba(44,94,67,0.1)" : "rgba(186,26,26,0.1)",
-                        color: isOk ? "var(--color-bamboo-green)" : "var(--color-error)",
-                        fontFamily: "var(--font-inter)",
-                      }}
-                    >
-                      [{count}]
-                    </span>
-                  </div>
-                );
-              })}
-              <button
-                onClick={addLine}
-                className="text-sm mt-2 px-3 py-1 rounded"
-                style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}
-              >
-                + Thêm câu
-              </button>
-            </div>
-
-            {/* Actions */}
-            <div className="p-4 border-t flex justify-between items-center" style={{ borderColor: "var(--color-border-tan)" }}>
-              <button className="btn-ghost px-4 py-2 text-sm" style={{ color: "var(--color-muted-gray)" }}>
-                💾 Lưu bản thảo
-              </button>
-              <button className="btn-primary px-5 py-2 text-sm" style={{ background: "var(--color-bamboo-green)" }}>
-                🌐 Đăng lên cộng đồng
-              </button>
+              {authorMode === "custom" && (
+                <input
+                  value={customAuthorName}
+                  onChange={(e) => setCustomAuthorName(e.target.value)}
+                  placeholder="Tên tác giả..."
+                  className="text-sm border rounded-md px-2 py-1 outline-none flex-1 min-w-[180px]"
+                  style={SELECT_STYLE}
+                />
+              )}
             </div>
           </div>
 
-          {/* RIGHT: AI assistant */}
-          <aside className="card p-5 overflow-y-auto" style={{ background: "#F0F4F1" }}>
-            <h3 className="text-label-caps mb-4 flex items-center gap-2" style={{ color: "var(--color-bamboo-green)" }}>
-              <span>✨</span> TRỢ LÝ AI
-            </h3>
+          {/* Poem body */}
+          <div className="p-6">
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Nhập trọn bài thơ của bạn ở đây..."
+              rows={12}
+              className="w-full resize-y outline-none bg-transparent text-lg leading-relaxed"
+              style={{ fontFamily: "var(--font-lora)", color: "var(--fg)", fontStyle: "italic" }}
+            />
+          </div>
 
-            {/* Rhythm map */}
-            <div className="mb-5">
-              <p className="text-xs font-semibold mb-2" style={{ fontFamily: "var(--font-inter)", color: "var(--fg)" }}>
-                Sơ đồ luật bằng–trắc (Lục bát):
+          {/* Actions */}
+          <div className="p-4 border-t" style={{ borderColor: "var(--color-border-tan)" }}>
+            {feedback && (
+              <p
+                className="text-xs mb-2"
+                style={{
+                  color: feedback.type === "ok" ? "var(--color-bamboo-green)" : "var(--color-error)",
+                  fontFamily: "var(--font-inter)",
+                }}
+              >
+                {feedback.text}
               </p>
-              <div className="flex flex-wrap gap-1.5">
-                {["B", "—", "B", "—", "B̲", "B", "—", "B", "—", "B", "—", "B̲", "B"].map((tone, i) => (
-                  <span
-                    key={i}
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
-                    style={{
-                      background: tone.includes("̲") ? "rgba(186,26,26,0.15)" : tone === "B" ? "rgba(44,94,67,0.1)" : "var(--color-surface-container)",
-                      color: tone.includes("̲") ? "var(--color-error)" : "var(--fg)",
-                      fontFamily: "var(--font-inter)",
-                      border: tone.includes("̲") ? "1.5px solid var(--color-error)" : "none",
-                    }}
-                  >
-                    {tone.replace("̲", "")}
-                  </span>
-                ))}
-              </div>
-              <p className="text-xs mt-2" style={{ color: "var(--color-error)", fontFamily: "var(--font-inter)" }}>
-                ⚠️ Âm tiết 6 cần vần BẰNG
-              </p>
+            )}
+            <div className="flex justify-end">
+              <button
+                onClick={publish}
+                disabled={saving}
+                className="btn-primary px-5 py-2 text-sm disabled:opacity-60"
+                style={{ background: "var(--color-bamboo-green)" }}
+              >
+                🌐 {saving ? "Đang đăng..." : "Đăng lên cộng đồng"}
+              </button>
             </div>
-
-            {/* Rhyme suggestions */}
-            <div>
-              <p className="text-xs font-semibold mb-2" style={{ fontFamily: "var(--font-inter)", color: "var(--fg)" }}>
-                Gợi ý vần với <strong style={{ color: "var(--color-lacquer-red)" }}>"{lastWord}"</strong>:
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {rhymes.map((r) => (
-                  <button
-                    key={r}
-                    className="px-3 py-1 rounded-full text-sm border transition-colors hover:border-[var(--color-bamboo-green)] hover:text-[var(--color-bamboo-green)]"
-                    style={{
-                      borderColor: "var(--color-border-tan)",
-                      color: "var(--fg)",
-                      fontFamily: "var(--font-lora)",
-                      background: "var(--color-paper-pure)",
-                    }}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div
-              className="mt-5 p-3 rounded-lg text-xs"
-              style={{
-                background: "rgba(44,94,67,0.08)",
-                color: "var(--color-bamboo-green)",
-                fontFamily: "var(--font-inter)",
-                lineHeight: 1.7,
-              }}
-            >
-              💡 <strong>Mẹo:</strong> Trong thơ Lục bát, tiếng thứ 6 câu 6 chữ phải vần với tiếng thứ 6 câu 8 chữ tiếp theo.
-            </div>
-          </aside>
+          </div>
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ import slugify from 'slugify';
 import { Poem, PoemStatus } from '../../entities/poem.entity';
 import { PoemVersion } from '../../entities/poem-version.entity';
 import { PoemLike } from '../../entities/poem-like.entity';
+import { Author } from '../../entities/author.entity';
 import { CreatePoemDto } from './dto/create-poem.dto';
 import { UpdatePoemDto } from './dto/update-poem.dto';
 import { QueryPoemDto } from './dto/query-poem.dto';
@@ -20,6 +21,7 @@ export class PoemsService {
     @InjectRepository(Poem) private poemRepo: Repository<Poem>,
     @InjectRepository(PoemVersion) private versionRepo: Repository<PoemVersion>,
     @InjectRepository(PoemLike) private likeRepo: Repository<PoemLike>,
+    @InjectRepository(Author) private authorRepo: Repository<Author>,
   ) {}
 
   async findAll(query: QueryPoemDto) {
@@ -28,6 +30,7 @@ export class PoemsService {
 
     const qb = this.poemRepo.createQueryBuilder('p')
       .leftJoinAndSelect('p.author', 'author')
+      .leftJoinAndSelect('p.creator', 'creator')
       .leftJoinAndSelect('p.category', 'category')
       .leftJoinAndSelect('p.era', 'era')
       .leftJoinAndSelect('p.versions', 'v', 'v.isPrimary = true')
@@ -39,7 +42,15 @@ export class PoemsService {
     if (author_id) qb.andWhere('p.authorId = :author_id', { author_id });
     if (category_id) qb.andWhere('p.categoryId = :category_id', { category_id });
     if (era_id) qb.andWhere('p.eraId = :era_id', { era_id });
-    if (is_member_poem !== undefined) qb.andWhere('p.isMemberPoem = :is_member_poem', { is_member_poem });
+    if (is_member_poem !== undefined) {
+      if (is_member_poem) {
+        // Thơ do thành viên sáng tác: không có tác giả gốc, gắn với 1 user.
+        qb.andWhere('p.authorId IS NULL').andWhere('p.createdBy IS NOT NULL');
+      } else {
+        // Thơ của tác giả: có author_id.
+        qb.andWhere('p.authorId IS NOT NULL');
+      }
+    }
 
     if (sort === 'views') qb.orderBy('p.viewCount', 'DESC');
     else if (sort === 'abc') qb.orderBy('p.title', 'ASC');
@@ -65,6 +76,7 @@ export class PoemsService {
       where: { slug },
       relations: [
         'author',
+        'creator',
         'category',
         'era',
         'versions',
@@ -89,7 +101,11 @@ export class PoemsService {
         id: poem.id,
         title: poem.title,
         slug: poem.slug,
-        author: { id: poem.author.id, name: poem.author.name, slug: poem.author.slug },
+        author: poem.author
+          ? { id: poem.author.id, name: poem.author.name, slug: poem.author.slug }
+          : poem.creator
+          ? { id: 0, name: poem.creator.displayName, slug: '' }
+          : null,
         category: poem.category ? { id: poem.category.id, name: poem.category.name } : null,
         view_count: poem.viewCount,
         like_count: poem.likeCount,
@@ -128,14 +144,21 @@ export class PoemsService {
     const slug = await this.generateSlug(dto.title);
     const isAdmin = user.role === UserRole.ADMIN || user.role === UserRole.MODERATOR;
 
+    // Phân giải tác giả: ưu tiên author_id; nếu chỉ có tên thì tìm hoặc tạo tác giả mới.
+    let authorId = dto.author_id ?? null;
+    if (!authorId && dto.author_name?.trim()) {
+      authorId = await this.findOrCreateAuthor(dto.author_name.trim(), user.id);
+    }
+
     const poem = this.poemRepo.create({
       title: dto.title,
       slug,
-      authorId: dto.author_id,
+      authorId,
       categoryId: dto.category_id,
       eraId: dto.era_id,
       sourceInfo: dto.source_info,
-      isMemberPoem: dto.is_member_poem ?? !isAdmin,
+      // Không gắn tác giả nào = thơ do chính thành viên sáng tác.
+      isMemberPoem: dto.is_member_poem ?? !authorId,
       status: (dto.status as PoemStatus) ?? (isAdmin ? PoemStatus.PUBLISHED : PoemStatus.PENDING),
       createdBy: user.id,
     });
@@ -176,11 +199,56 @@ export class PoemsService {
       eraId: dto.era_id ?? poem.eraId,
       sourceInfo: dto.source_info ?? poem.sourceInfo,
       isMemberPoem: dto.is_member_poem ?? poem.isMemberPoem,
-      status: dto.status ?? poem.status,
+      status: (dto.status as PoemStatus) ?? poem.status,
     });
 
     const saved = await this.poemRepo.save(poem);
+
+    if (dto.content !== undefined) {
+      let version = await this.versionRepo.findOne({
+        where: { poemId: poem.id, isPrimary: true },
+      });
+      if (version) {
+        version.content = dto.content;
+      } else {
+        version = this.versionRepo.create({
+          poemId: poem.id,
+          versionName: 'Bản chuẩn',
+          content: dto.content,
+          isPrimary: true,
+        });
+      }
+      await this.versionRepo.save(version);
+    }
+
     return { success: true, data: saved };
+  }
+
+  async findMine(user: User, status?: string) {
+    const where: { createdBy: number; status?: PoemStatus } = { createdBy: user.id };
+    if (status) where.status = status as PoemStatus;
+
+    const poems = await this.poemRepo.find({
+      where,
+      relations: ['versions'],
+      order: { updatedAt: 'DESC' },
+    });
+
+    return {
+      success: true,
+      data: poems.map((p) => {
+        const primary = p.versions?.find((v) => v.isPrimary) ?? p.versions?.[0];
+        return {
+          id: p.id,
+          title: p.title,
+          slug: p.slug,
+          status: p.status,
+          source_info: p.sourceInfo,
+          content: primary?.content ?? '',
+          updated_at: p.updatedAt,
+        };
+      }),
+    };
   }
 
   async remove(id: number, user: User) {
@@ -226,18 +294,42 @@ export class PoemsService {
       ? primaryVersion.content.split('\n').slice(0, 4).join('\n')
       : undefined;
 
+    const author = p.author
+      ? { id: p.author.id, name: p.author.name, slug: p.author.slug }
+      : p.creator
+      ? { id: 0, name: p.creator.displayName, slug: '' }
+      : null;
+
     return {
       id: p.id,
       title: p.title,
       slug: p.slug,
-      author: p.author ? { id: p.author.id, name: p.author.name, slug: p.author.slug } : null,
+      author,
       category: p.category ? { id: p.category.id, name: p.category.name } : null,
       view_count: p.viewCount,
       like_count: p.likeCount,
       is_member_poem: p.isMemberPoem,
+      status: p.status,
       created_at: p.createdAt,
       excerpt,
     };
+  }
+
+  private async findOrCreateAuthor(name: string, userId: number): Promise<number> {
+    const existing = await this.authorRepo.findOne({ where: { name } });
+    if (existing) return existing.id;
+
+    let slug = slugify(name, { lower: true, locale: 'vi', strict: true }) || 'tac-gia';
+    let count = 0;
+    while (await this.authorRepo.findOne({ where: { slug: count ? `${slug}-${count}` : slug } })) {
+      count++;
+    }
+    if (count) slug = `${slug}-${count}`;
+
+    const author = await this.authorRepo.save(
+      this.authorRepo.create({ name, slug, createdBy: userId }),
+    );
+    return author.id;
   }
 
   private async generateSlug(title: string): Promise<string> {

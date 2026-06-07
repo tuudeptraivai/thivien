@@ -42,7 +42,7 @@ export class QueryPoemDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @Transform(({ value }) => value === 'true')
+  @Transform(({ value }) => value === true || value === 'true')
   @IsBoolean()
   is_member_poem?: boolean;
 

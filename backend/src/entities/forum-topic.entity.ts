@@ -54,4 +54,7 @@ export class ForumTopic {
 
   @OneToMany(() => ForumPost, (post) => post.topic)
   posts: ForumPost[];
+
+  // Ảo: số bài viết/trả lời, gán qua loadRelationCountAndMap
+  replyCount?: number;
 }

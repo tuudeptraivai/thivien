@@ -30,6 +30,13 @@ export class PoemsController {
     return this.poemsService.findAll(query);
   }
 
+  @Get('mine')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Bài thơ / bản thảo của tôi' })
+  findMine(@CurrentUser() user: User, @Query('status') status?: string) {
+    return this.poemsService.findMine(user, status);
+  }
+
   @Public()
   @Get(':slug')
   @ApiOperation({ summary: 'Chi tiết bài thơ (tăng view)' })

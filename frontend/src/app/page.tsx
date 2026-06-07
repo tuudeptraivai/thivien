@@ -103,6 +103,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── FEATURED POEM ── */}
+      {featured && (
       <section className="max-w-[1280px] mx-auto px-6 mb-12">
         <div className="card p-8 relative overflow-hidden" style={{ background: "var(--color-paper-pure)" }}>
           <p className="text-label-caps mb-5" style={{ color: "var(--color-bamboo-green)" }}>
@@ -151,6 +152,7 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── MAIN 2-COLUMN ── */}
       <div className="max-w-[1280px] mx-auto px-6 pb-20">
