@@ -8,7 +8,8 @@ import type {
   ForumTopic,
   ForumCategoryItem,
   Statistics,
-  DictionaryEntry,
+  LookupResponse,
+  PopularDictionaryResponse,
   PoemFilters,
   AuthorFilters,
   User,
@@ -363,13 +364,20 @@ export async function getStatistics(): Promise<Statistics> {
 }
 
 // ------------------------------------------------
-// Dictionary
+// Dictionary (Hán–Việt reference)
 // ------------------------------------------------
 
-export async function lookupDictionary(keyword: string): Promise<DictionaryEntry[]> {
-  const { data } = await apiClient.get<ApiResponse<DictionaryEntry[]>>(
-    "/annotations/lookup",
-    { params: { keyword } }
+export async function lookupDictionary(query: string): Promise<LookupResponse> {
+  const { data } = await apiClient.post<ApiResponse<LookupResponse>>(
+    "/dictionary/lookup",
+    { query }
+  );
+  return data.data;
+}
+
+export async function getPopularDictionary(): Promise<PopularDictionaryResponse> {
+  const { data } = await apiClient.get<ApiResponse<PopularDictionaryResponse>>(
+    "/dictionary/popular"
   );
   return data.data;
 }
