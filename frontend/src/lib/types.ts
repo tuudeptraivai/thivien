@@ -95,10 +95,21 @@ export interface Poem {
   like_count: number;
   source_info?: string;
   is_member_poem: boolean;
+  status?: "draft" | "pending" | "published";
   versions?: PoemVersion[];
   translations?: Translation[];
   annotations?: Annotation[];
   excerpt?: string;
+}
+
+export interface MemberTranslation {
+  id: number;
+  translation_title?: string;
+  translation_type: string;
+  excerpt?: string;
+  translator: { name: string };
+  poem: { title: string; slug: string; author_name: string | null };
+  created_at: string;
 }
 
 export interface Comment {
@@ -138,6 +149,35 @@ export interface ForumTopic {
   last_reply_at: string;
   created_at: string;
   pinned?: boolean;
+}
+
+export interface ForumCategoryItem {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+}
+
+export interface ForumPostItem {
+  id: number;
+  author_name: string;
+  content: string;
+  created_at: string;
+  is_op: boolean;
+}
+
+export interface ForumTopicDetail {
+  id: number;
+  title: string;
+  slug: string;
+  category: string;
+  author_name: string;
+  view_count: number;
+  reply_count: number;
+  is_locked: boolean;
+  pinned: boolean;
+  created_at: string;
+  posts: ForumPostItem[];
 }
 
 export interface Statistics {

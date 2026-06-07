@@ -45,9 +45,16 @@ export class CreatePoemDto {
   @MaxLength(255)
   title: string;
 
-  @ApiProperty({ example: 101 })
+  @ApiPropertyOptional({ example: 101, description: 'ID tác giả có sẵn. Bỏ trống cho thơ sáng tác của chính thành viên.' })
+  @IsOptional()
   @IsNumber()
-  author_id: number;
+  author_id?: number;
+
+  @ApiPropertyOptional({ description: 'Tên tác giả tự điền — nếu chưa có trong hệ thống sẽ tạo tác giả mới.' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(150)
+  author_name?: string;
 
   @ApiPropertyOptional({ example: 9 })
   @IsOptional()

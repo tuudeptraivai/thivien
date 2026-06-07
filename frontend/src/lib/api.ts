@@ -6,6 +6,7 @@ import type {
   Poem,
   Comment,
   ForumTopic,
+  ForumCategoryItem,
   Statistics,
   DictionaryEntry,
   PoemFilters,
@@ -127,6 +128,56 @@ export async function getPoem(slug: string): Promise<Poem> {
 }
 
 // ------------------------------------------------
+// Member compositions (Sáng tác)
+// ------------------------------------------------
+
+export interface ComposePayload {
+  title: string;
+  content: string;
+  status?: "draft" | "pending" | "published";
+  source_info?: string;
+  author_id?: number;
+  author_name?: string;
+}
+
+export async function createPoem(payload: ComposePayload): Promise<Poem> {
+  const { data } = await apiClient.post<ApiResponse<Poem>>("/poems", {
+    title: payload.title,
+    status: payload.status,
+    source_info: payload.source_info,
+    author_id: payload.author_id,
+    author_name: payload.author_name,
+    versions: [{ content: payload.content, is_primary: true }],
+  });
+  return data.data;
+}
+
+export async function updatePoem(
+  id: number,
+  payload: Partial<ComposePayload>,
+): Promise<Poem> {
+  const { data } = await apiClient.put<ApiResponse<Poem>>(`/poems/${id}`, payload);
+  return data.data;
+}
+
+export interface DraftPoem {
+  id: number;
+  title: string;
+  slug: string;
+  status: "draft" | "pending" | "published";
+  source_info?: string;
+  content: string;
+  updated_at: string;
+}
+
+export async function getMyDrafts(): Promise<DraftPoem[]> {
+  const { data } = await apiClient.get<ApiResponse<DraftPoem[]>>("/poems/mine", {
+    params: { status: "draft" },
+  });
+  return data.data;
+}
+
+// ------------------------------------------------
 // Search
 // ------------------------------------------------
 
@@ -180,6 +231,21 @@ export async function likePoem(
 // ------------------------------------------------
 // Bookmarks
 // ------------------------------------------------
+
+export interface BookmarkItem {
+  poem_id: number;
+  title: string;
+  slug: string;
+  author: { name: string } | null;
+  bookmarked_at: string;
+}
+
+export async function getMyBookmarks(page = 1): Promise<BookmarkItem[]> {
+  const { data } = await apiClient.get<ApiResponse<BookmarkItem[]>>("/bookmarks", {
+    params: { page },
+  });
+  return data.data;
+}
 
 export async function checkBookmark(poemId: number): Promise<boolean> {
   const { data } = await apiClient.get<ApiResponse<{ bookmarked: boolean }>>(
@@ -241,6 +307,35 @@ export async function getForumTopics(page = 1): Promise<{
 
 export async function getForumTopic(slug: string): Promise<ForumTopic> {
   const { data } = await apiClient.get<ApiResponse<ForumTopic>>(`/forum/topics/${slug}`);
+  return data.data;
+}
+
+export async function getForumCategories(): Promise<ForumCategoryItem[]> {
+  const { data } = await apiClient.get<ApiResponse<ForumCategoryItem[]>>("/forum/categories");
+  return data.data;
+}
+
+export async function createForumTopic(payload: {
+  category_id: number;
+  title: string;
+  content: string;
+}): Promise<{ slug: string }> {
+  const { data } = await apiClient.post<ApiResponse<{ topic: { slug: string } }>>(
+    "/forum/topics",
+    payload
+  );
+  return { slug: data.data.topic.slug };
+}
+
+export async function createForumPost(
+  topicId: number,
+  content: string,
+  parentId?: number
+) {
+  const { data } = await apiClient.post(`/forum/topics/${topicId}/posts`, {
+    content,
+    parent_id: parentId,
+  });
   return data.data;
 }
 

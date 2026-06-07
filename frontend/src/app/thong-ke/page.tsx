@@ -1,36 +1,26 @@
 import type { Metadata } from "next";
-import { MOCK_STATS, MOCK_AUTHORS, MOCK_POEMS } from "@/lib/mockData";
-import { formatNumber } from "@/lib/utils";
 import Link from "next/link";
+import { formatNumber } from "@/lib/utils";
+import { getStatisticsSummary, getPoemsList, getTopAuthors } from "@/lib/server-api";
 
 export const metadata: Metadata = { title: "Thống kê Thi Uyển" };
+export const revalidate = 120;
 
-const KPI = [
-  { label: "Tác phẩm", value: MOCK_STATS.total_poems, icon: "📚", change: "+248 tuần này" },
-  { label: "Tác giả",  value: MOCK_STATS.total_authors, icon: "👤", change: "+12 tác giả mới" },
-  { label: "Quốc gia", value: MOCK_STATS.total_countries, icon: "🌏", change: "111 quốc gia" },
-  { label: "Thành viên", value: MOCK_STATS.total_members, icon: "✍️", change: "+180 tuần này" },
-  { label: "Bản dịch", value: MOCK_STATS.total_translations, icon: "🔤", change: "+56 tuần này" },
-];
+export default async function ThongKePage() {
+  const [stats, { data: topPoems }, topAuthors] = await Promise.all([
+    getStatisticsSummary(),
+    getPoemsList({ sort: "views", limit: 5 }),
+    getTopAuthors(5),
+  ]);
 
-const TOP_POEMS = MOCK_POEMS
-  .slice()
-  .sort((a, b) => b.view_count - a.view_count)
-  .slice(0, 5);
+  const KPI = [
+    { label: "Tác phẩm", value: stats.total_poems, icon: "📚" },
+    { label: "Tác giả", value: stats.total_authors, icon: "👤" },
+    { label: "Quốc gia", value: stats.total_countries, icon: "🌏" },
+    { label: "Thành viên", value: stats.total_members, icon: "✍️" },
+    { label: "Bản dịch", value: stats.total_translations, icon: "🔤" },
+  ];
 
-const TOP_AUTHORS = MOCK_AUTHORS
-  .slice()
-  .sort((a, b) => b.poem_count - a.poem_count)
-  .slice(0, 5);
-
-const COUNTRY_DIST = [
-  { country: "Việt Nam",    count: 42000, pct: 37 },
-  { country: "Trung Quốc", count: 51000, pct: 45 },
-  { country: "Nhật Bản",   count: 8500,  pct: 8 },
-  { country: "Khác",       count: 10881, pct: 10 },
-];
-
-export default function ThongKePage() {
   return (
     <div style={{ background: "var(--color-background-parchment)", minHeight: "100vh" }}>
       <div className="max-w-[1280px] mx-auto px-6 py-12">
@@ -52,111 +42,92 @@ export default function ThongKePage() {
               >
                 {formatNumber(k.value)}
               </p>
-              <p className="text-sm font-medium mb-1" style={{ fontFamily: "var(--font-inter)", color: "var(--fg)" }}>
+              <p className="text-sm font-medium" style={{ fontFamily: "var(--font-inter)", color: "var(--fg)" }}>
                 {k.label}
-              </p>
-              <p className="text-xs" style={{ color: "var(--color-bamboo-green)", fontFamily: "var(--font-inter)" }}>
-                {k.change}
               </p>
             </div>
           ))}
         </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-          {/* Country distribution */}
-          <div className="card p-6 lg:col-span-1">
-            <h2 className="text-label-caps mb-5" style={{ color: "var(--color-bamboo-green)" }}>
-              PHÂN BỐ THEO QUỐC GIA
-            </h2>
-            <div className="space-y-4">
-              {COUNTRY_DIST.map((c) => (
-                <div key={c.country}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span style={{ fontFamily: "var(--font-inter)", color: "var(--fg)" }}>{c.country}</span>
-                    <span style={{ fontFamily: "var(--font-inter)", color: "var(--color-muted-gray)" }}>
-                      {formatNumber(c.count)} ({c.pct}%)
-                    </span>
-                  </div>
-                  <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--color-surface-container)" }}>
-                    <div
-                      className="h-full rounded-full"
-                      style={{
-                        width: `${c.pct}%`,
-                        background: "var(--color-lacquer-red)",
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
           {/* Top poems */}
           <div className="card p-6">
             <h2 className="text-label-caps mb-5" style={{ color: "var(--color-bamboo-green)" }}>
               TÁC PHẨM XEM NHIỀU NHẤT
             </h2>
-            <ol className="space-y-3">
-              {TOP_POEMS.map((poem, i) => (
-                <li key={poem.id} className="flex items-start gap-3">
-                  <span
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5"
-                    style={{ background: i < 3 ? "var(--color-lacquer-red)" : "var(--color-muted-gray)" }}
-                  >
-                    {i + 1}
-                  </span>
-                  <div className="min-w-0">
-                    <Link
-                      href={`/tho/${poem.slug}`}
-                      className="text-sm font-semibold hover:text-[var(--color-lacquer-red)] transition-colors line-clamp-1"
-                      style={{ fontFamily: "var(--font-lora)", color: "var(--fg)" }}
+            {topPoems.length === 0 ? (
+              <p className="text-sm" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
+                Chưa có dữ liệu.
+              </p>
+            ) : (
+              <ol className="space-y-3">
+                {topPoems.map((poem, i) => (
+                  <li key={poem.id} className="flex items-start gap-3">
+                    <span
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5"
+                      style={{ background: i < 3 ? "var(--color-lacquer-red)" : "var(--color-muted-gray)" }}
                     >
-                      {poem.title}
-                    </Link>
-                    <p className="text-xs" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
-                      {poem.author.name} · {formatNumber(poem.view_count)} lượt xem
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ol>
+                      {i + 1}
+                    </span>
+                    <div className="min-w-0">
+                      <Link
+                        href={`/tho/${poem.slug}`}
+                        className="text-sm font-semibold hover:text-[var(--color-lacquer-red)] transition-colors line-clamp-1"
+                        style={{ fontFamily: "var(--font-lora)", color: "var(--fg)" }}
+                      >
+                        {poem.title}
+                      </Link>
+                      <p className="text-xs" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
+                        {poem.author?.name ?? "Khuyết danh"} · {formatNumber(poem.view_count)} lượt xem
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            )}
           </div>
 
           {/* Top authors */}
           <div className="card p-6">
             <h2 className="text-label-caps mb-5" style={{ color: "var(--color-bamboo-green)" }}>
-              TÁC GIẢ NHIỀU NHẤT
+              TÁC GIẢ NHIỀU TÁC PHẨM
             </h2>
-            <ol className="space-y-3">
-              {TOP_AUTHORS.map((author, i) => (
-                <li key={author.id} className="flex items-center gap-3">
-                  <span
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                    style={{ background: i < 3 ? "var(--color-lacquer-red)" : "var(--color-muted-gray)" }}
-                  >
-                    {i + 1}
-                  </span>
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white font-semibold shrink-0"
-                    style={{ background: "var(--color-bamboo-green)" }}
-                  >
-                    {author.name.charAt(0)}
-                  </div>
-                  <div>
-                    <Link
-                      href={`/tac-gia/${author.slug}`}
-                      className="text-sm font-medium hover:text-[var(--color-lacquer-red)] transition-colors"
-                      style={{ fontFamily: "var(--font-lora)", color: "var(--fg)" }}
+            {topAuthors.length === 0 ? (
+              <p className="text-sm" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
+                Chưa có dữ liệu.
+              </p>
+            ) : (
+              <ol className="space-y-3">
+                {topAuthors.map((author, i) => (
+                  <li key={author.id} className="flex items-center gap-3">
+                    <span
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+                      style={{ background: i < 3 ? "var(--color-lacquer-red)" : "var(--color-muted-gray)" }}
                     >
-                      {author.name}
-                    </Link>
-                    <p className="text-xs" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
-                      {author.poem_count} tác phẩm
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ol>
+                      {i + 1}
+                    </span>
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white font-semibold shrink-0"
+                      style={{ background: "var(--color-bamboo-green)" }}
+                    >
+                      {author.name.charAt(0)}
+                    </div>
+                    <div>
+                      <Link
+                        href={`/tac-gia/${author.slug}`}
+                        className="text-sm font-medium hover:text-[var(--color-lacquer-red)] transition-colors"
+                        style={{ fontFamily: "var(--font-lora)", color: "var(--fg)" }}
+                      >
+                        {author.name}
+                      </Link>
+                      <p className="text-xs" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
+                        {author.poem_count} tác phẩm
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            )}
           </div>
         </div>
       </div>

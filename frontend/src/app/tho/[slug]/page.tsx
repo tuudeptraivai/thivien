@@ -71,13 +71,30 @@ export default async function PoemReaderPage({ params }: Props) {
             {poem.title}
           </h1>
           <div className="flex items-center justify-center gap-3 flex-wrap">
-            <Link
-              href={`/tac-gia/${poem.author.slug}`}
-              className="font-semibold hover:underline"
-              style={{ color: "var(--color-lacquer-red)", fontFamily: "var(--font-lora)" }}
-            >
-              {poem.author.name}
-            </Link>
+            {poem.author?.slug ? (
+              <Link
+                href={`/tac-gia/${poem.author.slug}`}
+                className="font-semibold hover:underline"
+                style={{ color: "var(--color-lacquer-red)", fontFamily: "var(--font-lora)" }}
+              >
+                {poem.author.name}
+              </Link>
+            ) : (
+              <span
+                className="font-semibold"
+                style={{ color: "var(--color-lacquer-red)", fontFamily: "var(--font-lora)" }}
+              >
+                {poem.author?.name ?? "Khuyết danh"}
+                {poem.is_member_poem && (
+                  <span
+                    className="ml-1 font-normal text-xs"
+                    style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}
+                  >
+                    · thành viên
+                  </span>
+                )}
+              </span>
+            )}
             {poem.category && <Badge variant="default">{poem.category.name}</Badge>}
             <span
               className="text-xs flex items-center gap-1"

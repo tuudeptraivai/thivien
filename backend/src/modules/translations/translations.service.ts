@@ -13,6 +13,44 @@ export class TranslationsService {
     @InjectRepository(PoemVersion) private versionRepo: Repository<PoemVersion>,
   ) {}
 
+  async findMemberTranslations(page = 1, limit = 18) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await this.translationRepo
+      .createQueryBuilder('t')
+      .innerJoinAndSelect('t.translatorUser', 'tu')
+      .innerJoinAndSelect('t.poemVersion', 'pv')
+      .innerJoinAndSelect('pv.poem', 'poem')
+      .leftJoinAndSelect('poem.author', 'author')
+      .where('t.translatorUserId IS NOT NULL')
+      .orderBy('t.createdAt', 'DESC')
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      success: true,
+      meta: {
+        total_records: total,
+        total_pages: Math.ceil(total / limit),
+        current_page: page,
+        limit,
+      },
+      data: data.map((t) => ({
+        id: t.id,
+        translation_title: t.translationTitle,
+        translation_type: t.translationType,
+        excerpt: t.content ? t.content.split('\n').slice(0, 4).join('\n') : undefined,
+        translator: { name: t.translatorUser.displayName },
+        poem: {
+          title: t.poemVersion.poem.title,
+          slug: t.poemVersion.poem.slug,
+          author_name: t.poemVersion.poem.author?.name ?? null,
+        },
+        created_at: t.createdAt,
+      })),
+    };
+  }
+
   async create(poemId: number, versionId: number, dto: CreateTranslationDto, user: User) {
     const version = await this.versionRepo.findOne({ where: { id: versionId, poemId } });
     if (!version) throw new NotFoundException('Không tìm thấy dị bản bài thơ');

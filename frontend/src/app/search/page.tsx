@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { PoemCard } from "@/components/poem/PoemCard";
-import { Badge } from "@/components/ui/Badge";
-import { MOCK_POEMS } from "@/lib/mockData";
+import { getPoemsList } from "@/lib/server-api";
 
 export const metadata: Metadata = { title: "Tìm kiếm thơ" };
 
@@ -16,12 +14,9 @@ export default async function SearchPage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const { q = "" } = await searchParams;
-  const results = MOCK_POEMS.filter(
-    (p) =>
-      !q ||
-      p.title.toLowerCase().includes(q.toLowerCase()) ||
-      p.author.name.toLowerCase().includes(q.toLowerCase())
-  );
+  const { data: results, meta } = q
+    ? await getPoemsList({ search: q, limit: 24 })
+    : { data: [], meta: { total_records: 0, total_pages: 1, current_page: 1, limit: 24 } };
 
   return (
     <div style={{ background: "var(--color-background-parchment)", minHeight: "100vh" }}>
@@ -39,17 +34,18 @@ export default async function SearchPage({
                 <label className="text-label-caps block mb-2" style={{ color: "var(--color-bamboo-green)" }}>
                   TỪ KHOÁ
                 </label>
-                <div className="search-pill flex items-center gap-2 px-3 py-2">
+                <form action="/search" method="get" className="search-pill flex items-center gap-2 px-3 py-2">
                   <svg className="w-4 h-4 shrink-0" style={{ color: "var(--color-muted-gray)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                   </svg>
                   <input
+                    name="q"
                     defaultValue={q}
                     placeholder="Nhập từ khoá..."
                     className="bg-transparent outline-none text-sm flex-1"
                     style={{ fontFamily: "var(--font-inter)", color: "var(--fg)" }}
                   />
-                </div>
+                </form>
               </div>
 
               {/* Era */}
@@ -122,8 +118,8 @@ export default async function SearchPage({
           <section>
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
-                Tìm thấy <strong style={{ color: "var(--fg)" }}>{results.length}</strong> kết quả
-                {q && <> cho <strong style={{ color: "var(--color-lacquer-red)" }}>"{q}"</strong></>}
+                Tìm thấy <strong style={{ color: "var(--fg)" }}>{meta.total_records}</strong> kết quả
+                {q && <> cho <strong style={{ color: "var(--color-lacquer-red)" }}>&ldquo;{q}&rdquo;</strong></>}
               </p>
               <select
                 className="text-sm border rounded-md px-2 py-1 outline-none"

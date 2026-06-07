@@ -28,6 +28,7 @@ export class ForumService {
     const qb = this.topicRepo.createQueryBuilder('t')
       .leftJoinAndSelect('t.user', 'user')
       .leftJoinAndSelect('t.category', 'category')
+      .loadRelationCountAndMap('t.replyCount', 't.posts')
       .orderBy('t.isPinned', 'DESC')
       .addOrderBy('t.updatedAt', 'DESC')
       .skip(skip)
@@ -39,19 +40,56 @@ export class ForumService {
     return {
       success: true,
       meta: { total_records: total, total_pages: Math.ceil(total / limit), current_page: page, limit },
-      data,
+      data: data.map((t) => ({
+        id: t.id,
+        title: t.title,
+        slug: t.slug,
+        category: t.category?.name ?? '',
+        author_name: t.user?.displayName ?? 'Ẩn danh',
+        reply_count: Math.max(0, (t.replyCount ?? 1) - 1),
+        view_count: t.viewCount,
+        last_reply_at: t.updatedAt,
+        created_at: t.createdAt,
+        pinned: t.isPinned,
+      })),
     };
   }
 
   async getTopicBySlug(slug: string) {
     const topic = await this.topicRepo.findOne({
       where: { slug },
-      relations: ['user', 'category', 'posts', 'posts.user', 'posts.replies', 'posts.replies.user'],
+      relations: ['user', 'category', 'posts', 'posts.user'],
     });
     if (!topic) throw new NotFoundException('Không tìm thấy chủ đề');
     topic.viewCount++;
     await this.topicRepo.save(topic);
-    return { success: true, data: topic };
+
+    const posts = (topic.posts ?? [])
+      .slice()
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+    return {
+      success: true,
+      data: {
+        id: topic.id,
+        title: topic.title,
+        slug: topic.slug,
+        category: topic.category?.name ?? '',
+        author_name: topic.user?.displayName ?? 'Ẩn danh',
+        view_count: topic.viewCount,
+        reply_count: Math.max(0, posts.length - 1),
+        is_locked: topic.isLocked,
+        pinned: topic.isPinned,
+        created_at: topic.createdAt,
+        posts: posts.map((p, i) => ({
+          id: p.id,
+          author_name: p.user?.displayName ?? 'Ẩn danh',
+          content: p.content,
+          created_at: p.createdAt,
+          is_op: i === 0,
+        })),
+      },
+    };
   }
 
   async createTopic(dto: CreateTopicDto, user: User) {

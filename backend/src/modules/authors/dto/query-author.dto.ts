@@ -36,7 +36,7 @@ export class QueryAuthorDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @Transform(({ value }) => value === 'true')
+  @Transform(({ value }) => value === true || value === 'true')
   @IsBoolean()
   verified?: boolean;
 

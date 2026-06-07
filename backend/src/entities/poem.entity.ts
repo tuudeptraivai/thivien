@@ -35,8 +35,8 @@ export class Poem {
   @Column({ length: 255, unique: true })
   slug: string;
 
-  @Column({ name: 'author_id' })
-  authorId: number;
+  @Column({ name: 'author_id', nullable: true })
+  authorId: number | null;
 
   @Column({ name: 'category_id', nullable: true })
   categoryId: number;
@@ -68,9 +68,9 @@ export class Poem {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
 
-  @ManyToOne(() => Author, (author) => author.poems, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Author, (author) => author.poems, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'author_id' })
-  author: Author;
+  author: Author | null;
 
   @ManyToOne(() => PoemCategory, (cat) => cat.poems, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'category_id' })

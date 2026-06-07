@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TranslationsService } from './translations.service';
 import { CreateTranslationDto, UpdateTranslationDto } from './dto/create-translation.dto';
+import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { User } from '../../entities/user.entity';
 
@@ -10,6 +11,19 @@ import { User } from '../../entities/user.entity';
 @Controller()
 export class TranslationsController {
   constructor(private readonly translationsService: TranslationsService) {}
+
+  @Public()
+  @Get('translations/member')
+  @ApiOperation({ summary: 'Danh sách bản dịch do thành viên đóng góp' })
+  findMemberTranslations(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.translationsService.findMemberTranslations(
+      page ? +page : 1,
+      limit ? +limit : 18,
+    );
+  }
 
   @Post('poems/:poem_id/versions/:version_id/translations')
   @ApiOperation({ summary: 'Đóng góp bản dịch mới' })
