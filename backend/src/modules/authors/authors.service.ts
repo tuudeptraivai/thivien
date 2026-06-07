@@ -17,7 +17,7 @@ export class AuthorsService {
   constructor(@InjectRepository(Author) private authorRepo: Repository<Author>) {}
 
   async findAll(query: QueryAuthorDto) {
-    const { page = 1, limit = 20, search, country_id, era_id, verified, letter } = query;
+    const { page = 1, limit = 20, search, country_id, era_id, verified, letter, sort } = query;
     const skip = (page - 1) * limit;
 
     const qb = this.authorRepo.createQueryBuilder('a')
@@ -35,7 +35,18 @@ export class AuthorsService {
     if (era_id) qb.andWhere('a.eraId = :era_id', { era_id });
     if (verified !== undefined) qb.andWhere('a.isVerified = :verified', { verified });
 
-    qb.orderBy('a.name', 'ASC').skip(skip).take(limit);
+    if (sort === 'poems' || sort === 'poem_count') {
+      // Sắp xếp theo số tác phẩm giảm dần (dùng cho "Tác giả nhiều tác phẩm").
+      // Dùng offset/limit thay vì skip/take: skip/take + join sẽ kích hoạt
+      // subquery phân trang DISTINCT khiến TypeORM không parse được biểu thức
+      // subquery trong ORDER BY. country/era là ManyToOne nên LIMIT vẫn đúng.
+      qb.orderBy('(SELECT COUNT(*) FROM poems p WHERE p.author_id = a.id)', 'DESC')
+        .addOrderBy('a.name', 'ASC')
+        .offset(skip)
+        .limit(limit);
+    } else {
+      qb.orderBy('a.name', 'ASC').skip(skip).take(limit);
+    }
 
     const [data, total] = await qb.getManyAndCount();
 

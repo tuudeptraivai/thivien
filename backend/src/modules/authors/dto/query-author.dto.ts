@@ -44,4 +44,11 @@ export class QueryAuthorDto {
   @IsOptional()
   @IsString()
   letter?: string;
+
+  @ApiPropertyOptional({
+    description: "Sắp xếp: 'name' (mặc định, A→Z) hoặc 'poems' (nhiều tác phẩm nhất)",
+  })
+  @IsOptional()
+  @IsString()
+  sort?: string;
 }

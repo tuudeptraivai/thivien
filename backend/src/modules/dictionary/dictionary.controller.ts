@@ -13,7 +13,7 @@ export class DictionaryController {
   @Post('lookup')
   @ApiOperation({
     summary:
-      'Tra cứu chữ Hán / Hán–Việt / Pinyin / nghĩa tiếng Việt qua Claude AI (fallback offline)',
+      'Tra cứu chữ Hán / Hán–Việt / Pinyin / nghĩa tiếng Việt qua Gemini AI (fallback offline)',
   })
   async lookup(@Body() dto: LookupDictionaryDto): Promise<LookupResponseDto> {
     return this.service.lookup(dto.query);

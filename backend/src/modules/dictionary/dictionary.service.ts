@@ -2,7 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DictionaryEntry } from './dto/dictionary-entry.dto';
 import { LookupResponseDto } from './dto/lookup-dictionary.dto';
-import { DICTIONARY_SYSTEM_PROMPT, DICTIONARY_TOOL } from './dictionary.prompt';
+import {
+  DICTIONARY_RESPONSE_SCHEMA,
+  DICTIONARY_SYSTEM_PROMPT,
+} from './dictionary.prompt';
 import {
   getPopularOffline,
   OFFLINE_ENTRIES,
@@ -16,9 +19,9 @@ interface CacheEntry {
 
 const CACHE_TTL_MS = 30 * 60 * 1000; // 30 phút
 const CACHE_MAX_ENTRIES = 256;
-const CLAUDE_MODEL = 'claude-haiku-4-5';
-const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
-const CLAUDE_API_VERSION = '2023-06-01';
+const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_API_BASE =
+  'https://generativelanguage.googleapis.com/v1beta/models';
 
 @Injectable()
 export class DictionaryService {
@@ -42,18 +45,18 @@ export class DictionaryService {
     const cached = this.readCache(cacheKey);
     if (cached) return cached;
 
-    const apiKey = this.config.get<string>('ANTHROPIC_API_KEY');
+    const apiKey = this.config.get<string>('GEMINI_API_KEY');
     if (apiKey) {
       try {
-        const aiResult = await this.lookupWithClaude(query, apiKey);
+        const aiResult = await this.lookupWithGemini(query, apiKey);
         if (aiResult.results.length > 0) {
           this.writeCache(cacheKey, aiResult);
           return aiResult;
         }
-        this.logger.warn(`Claude trả về kết quả rỗng cho "${query}", fallback offline`);
+        this.logger.warn(`Gemini trả về kết quả rỗng cho "${query}", fallback offline`);
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        this.logger.warn(`Claude API lỗi (${message}), fallback offline`);
+        this.logger.warn(`Gemini API lỗi (${message}), fallback offline`);
       }
     }
 
@@ -79,7 +82,7 @@ export class DictionaryService {
     ).map((e) => e.character);
 
     const message = noApiKey
-      ? 'Đang dùng từ điển tham khảo nội bộ (chưa cấu hình ANTHROPIC_API_KEY).'
+      ? 'Đang dùng từ điển tham khảo nội bộ (chưa cấu hình GEMINI_API_KEY).'
       : 'Đang dùng từ điển tham khảo nội bộ do dịch vụ AI tạm thời không khả dụng.';
 
     return {
@@ -90,35 +93,45 @@ export class DictionaryService {
     };
   }
 
-  private async lookupWithClaude(
+  private async lookupWithGemini(
     query: string,
     apiKey: string,
   ): Promise<LookupResponseDto> {
+    const model =
+      this.config.get<string>('GEMINI_MODEL') || DEFAULT_GEMINI_MODEL;
+
     const body = {
-      model: CLAUDE_MODEL,
-      max_tokens: 2048,
-      system: DICTIONARY_SYSTEM_PROMPT,
-      tools: [DICTIONARY_TOOL],
-      tool_choice: { type: 'tool', name: DICTIONARY_TOOL.name },
-      messages: [
+      systemInstruction: {
+        parts: [{ text: DICTIONARY_SYSTEM_PROMPT }],
+      },
+      contents: [
         {
           role: 'user',
-          content: `Tra cứu: ${query}`,
+          parts: [{ text: `Tra cứu: ${query}` }],
         },
       ],
+      generationConfig: {
+        responseMimeType: 'application/json',
+        responseSchema: DICTIONARY_RESPONSE_SCHEMA,
+        maxOutputTokens: 4096,
+        // Tắt "thinking" của gemini-2.5-flash: tác vụ tra từ không cần suy luận
+        // sâu, và quota thinking ăn hết maxOutputTokens khiến JSON bị cắt cụt.
+        thinkingConfig: { thinkingBudget: 0 },
+      },
     };
+
+    const url = `${GEMINI_API_BASE}/${encodeURIComponent(model)}:generateContent`;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 20_000);
 
     let res: Response;
     try {
-      res = await fetch(CLAUDE_API_URL, {
+      res = await fetch(url, {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': CLAUDE_API_VERSION,
+          'x-goog-api-key': apiKey,
         },
         body: JSON.stringify(body),
         signal: controller.signal,
@@ -133,35 +146,41 @@ export class DictionaryService {
     }
 
     const payload = (await res.json()) as {
-      content?: Array<{
-        type: string;
-        name?: string;
-        input?: {
-          results?: DictionaryEntry[];
-          suggestedQueries?: string[];
-          message?: string;
-        };
+      candidates?: Array<{
+        content?: { parts?: Array<{ text?: string }> };
       }>;
     };
 
-    const toolUse = payload.content?.find(
-      (block) => block.type === 'tool_use' && block.name === DICTIONARY_TOOL.name,
-    );
+    const text = payload.candidates?.[0]?.content?.parts
+      ?.map((p) => p.text ?? '')
+      .join('')
+      .trim();
 
-    if (!toolUse?.input) {
-      throw new Error('Claude không trả về tool_use hợp lệ');
+    if (!text) {
+      throw new Error('Gemini không trả về nội dung hợp lệ');
     }
 
-    const results = Array.isArray(toolUse.input.results) ? toolUse.input.results : [];
-    const suggestedQueries = Array.isArray(toolUse.input.suggestedQueries)
-      ? toolUse.input.suggestedQueries.filter((s): s is string => typeof s === 'string')
+    let parsed: {
+      results?: DictionaryEntry[];
+      suggestedQueries?: string[];
+      message?: string;
+    };
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      throw new Error('Gemini trả về JSON không hợp lệ');
+    }
+
+    const results = Array.isArray(parsed.results) ? parsed.results : [];
+    const suggestedQueries = Array.isArray(parsed.suggestedQueries)
+      ? parsed.suggestedQueries.filter((s): s is string => typeof s === 'string')
       : [];
 
     return {
       source: 'ai',
       results,
       suggestedQueries,
-      message: toolUse.input.message,
+      message: parsed.message,
     };
   }
 
