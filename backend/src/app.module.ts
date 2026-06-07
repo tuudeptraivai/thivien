@@ -20,6 +20,7 @@ import { CountriesModule } from './modules/countries/countries.module';
 import { ErasModule } from './modules/eras/eras.module';
 import { PoemCategoriesModule } from './modules/poem-categories/poem-categories.module';
 import { StatisticsModule } from './modules/statistics/statistics.module';
+import { DictionaryModule } from './modules/dictionary/dictionary.module';
 
 import { User } from './entities/user.entity';
 import { Author } from './entities/author.entity';
@@ -77,6 +78,7 @@ import { PoemLike } from './entities/poem-like.entity';
     ErasModule,
     PoemCategoriesModule,
     StatisticsModule,
+    DictionaryModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },

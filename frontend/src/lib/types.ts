@@ -148,14 +148,33 @@ export interface Statistics {
   total_translations: number;
 }
 
+export interface DictionaryExample {
+  word: string;
+  transcription: string;
+  translation: string;
+}
+
 export interface DictionaryEntry {
-  id: number;
-  chinese_char?: string;
-  han_viet: string;
-  vietnamese_meaning: string;
-  stroke_count?: number;
-  radical?: string;
-  examples?: string[];
+  character: string;
+  sinoVietnamese: string;
+  pinyin: string;
+  strokes: string;
+  radical: string;
+  definition: string;
+  examples: DictionaryExample[];
+  analyticalNotes?: string;
+}
+
+export interface LookupResponse {
+  source: "ai" | "offline";
+  results: DictionaryEntry[];
+  suggestedQueries: string[];
+  message?: string;
+}
+
+export interface PopularDictionaryResponse {
+  source: "offline";
+  results: DictionaryEntry[];
 }
 
 export interface User {

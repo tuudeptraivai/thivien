@@ -38,6 +38,7 @@ async function bootstrap() {
     .addTag('Countries', 'Quản lý quốc gia')
     .addTag('Eras', 'Quản lý thời kỳ / triều đại')
     .addTag('Poem Categories', 'Quản lý thể loại thơ')
+    .addTag('Dictionary', 'Từ điển tham khảo Hán–Việt (AI + offline)')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
