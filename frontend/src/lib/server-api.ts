@@ -64,7 +64,7 @@ export async function getFeaturedPoem(): Promise<Poem | null> {
 }
 
 export async function getTopAuthors(limit = 4): Promise<Author[]> {
-  return (await apiFetch<Author[]>(`/authors?limit=${limit}`)) ?? [];
+  return (await apiFetch<Author[]>(`/authors?sort=poems&limit=${limit}`)) ?? [];
 }
 
 export async function getHomeStats(): Promise<Statistics> {

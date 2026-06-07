@@ -1,5 +1,5 @@
 /**
- * System prompt cho Claude khi tra cứu từ điển Hán–Việt.
+ * System prompt cho Gemini khi tra cứu từ điển Hán–Việt.
  * Hướng dẫn model đóng vai "chuyên gia Hán–Nôm hàng đầu" và trả về
  * JSON đúng schema {@link DictionaryEntry}.
  */
@@ -11,7 +11,7 @@ Nhiệm vụ: tra cứu chữ Hán theo yêu cầu của người dùng. Ngườ
 - Bính âm (Pinyin, vd: "shī", "yuè")
 - Nghĩa tiếng Việt (vd: "mặt trăng", "trái tim")
 
-Bạn LUÔN trả về kết quả bằng cách gọi tool record_dictionary_lookup với đúng schema. Trả về 1–5 entry phù hợp nhất, sắp xếp theo độ liên quan giảm dần.
+Bạn LUÔN trả về một đối tượng JSON đúng schema được yêu cầu. Trả về 1–5 entry phù hợp nhất trong trường results, sắp xếp theo độ liên quan giảm dần.
 
 Quy ước viết:
 - character: chữ Hán phồn thể (vd: 詩, không phải 诗)
@@ -28,66 +28,63 @@ Ngoài ra, đưa ra 3–5 gợi ý truy vấn tiếp theo trong suggestedQueries
 Nếu truy vấn không hợp lệ hoặc không tìm được kết quả, trả về results rỗng và giải thích trong message.`;
 
 /**
- * Schema tool dùng cho Claude tool use — buộc model trả về JSON đúng cấu trúc.
+ * Response schema dùng cho Gemini structured output (responseSchema) —
+ * buộc model trả về JSON đúng cấu trúc {@link LookupResponseDto}.
+ * Theo subset OpenAPI của Gemini: type viết hoa (OBJECT, ARRAY, STRING).
  */
-export const DICTIONARY_TOOL = {
-  name: 'record_dictionary_lookup',
-  description:
-    'Ghi lại kết quả tra cứu từ điển Hán–Việt với danh sách entry + gợi ý truy vấn tiếp theo.',
-  input_schema: {
-    type: 'object' as const,
-    properties: {
-      results: {
-        type: 'array',
-        description: 'Danh sách 1–5 entry phù hợp nhất, sắp xếp theo độ liên quan.',
-        items: {
-          type: 'object',
-          properties: {
-            character: { type: 'string', description: 'Chữ Hán phồn thể' },
-            sinoVietnamese: { type: 'string', description: 'Phiên âm Hán–Việt' },
-            pinyin: { type: 'string', description: 'Bính âm có dấu thanh' },
-            strokes: { type: 'string', description: 'Số nét' },
-            radical: { type: 'string', description: 'Bộ thủ kèm phiên âm trong ngoặc' },
-            definition: { type: 'string', description: 'Nghĩa tiếng Việt (1–3 câu)' },
-            examples: {
-              type: 'array',
-              description: '2–4 ví dụ minh hoạ',
-              items: {
-                type: 'object',
-                properties: {
-                  word: { type: 'string', description: 'Từ ghép Hán' },
-                  transcription: { type: 'string', description: 'Phiên âm Hán–Việt' },
-                  translation: { type: 'string', description: 'Dịch nghĩa tiếng Việt' },
-                },
-                required: ['word', 'transcription', 'translation'],
+export const DICTIONARY_RESPONSE_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    results: {
+      type: 'ARRAY',
+      description: 'Danh sách 1–5 entry phù hợp nhất, sắp xếp theo độ liên quan.',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          character: { type: 'STRING', description: 'Chữ Hán phồn thể' },
+          sinoVietnamese: { type: 'STRING', description: 'Phiên âm Hán–Việt' },
+          pinyin: { type: 'STRING', description: 'Bính âm có dấu thanh' },
+          strokes: { type: 'STRING', description: 'Số nét' },
+          radical: { type: 'STRING', description: 'Bộ thủ kèm phiên âm trong ngoặc' },
+          definition: { type: 'STRING', description: 'Nghĩa tiếng Việt (1–3 câu)' },
+          examples: {
+            type: 'ARRAY',
+            description: '2–4 ví dụ minh hoạ',
+            items: {
+              type: 'OBJECT',
+              properties: {
+                word: { type: 'STRING', description: 'Từ ghép Hán' },
+                transcription: { type: 'STRING', description: 'Phiên âm Hán–Việt' },
+                translation: { type: 'STRING', description: 'Dịch nghĩa tiếng Việt' },
               },
-            },
-            analyticalNotes: {
-              type: 'string',
-              description: 'Chiết tự / ghi chú từ nguyên (tuỳ chọn nhưng nên có)',
+              required: ['word', 'transcription', 'translation'],
             },
           },
-          required: [
-            'character',
-            'sinoVietnamese',
-            'pinyin',
-            'strokes',
-            'radical',
-            'definition',
-            'examples',
-          ],
+          analyticalNotes: {
+            type: 'STRING',
+            description: 'Chiết tự / ghi chú từ nguyên (tuỳ chọn nhưng nên có)',
+          },
         },
-      },
-      suggestedQueries: {
-        type: 'array',
-        description: '3–5 gợi ý truy vấn tiếp theo (chữ Hán hoặc cụm từ liên quan).',
-        items: { type: 'string' },
-      },
-      message: {
-        type: 'string',
-        description: 'Thông báo bổ sung (vd: khi không tìm được kết quả).',
+        required: [
+          'character',
+          'sinoVietnamese',
+          'pinyin',
+          'strokes',
+          'radical',
+          'definition',
+          'examples',
+        ],
       },
     },
-    required: ['results', 'suggestedQueries'],
+    suggestedQueries: {
+      type: 'ARRAY',
+      description: '3–5 gợi ý truy vấn tiếp theo (chữ Hán hoặc cụm từ liên quan).',
+      items: { type: 'STRING' },
+    },
+    message: {
+      type: 'STRING',
+      description: 'Thông báo bổ sung (vd: khi không tìm được kết quả).',
+    },
   },
+  required: ['results', 'suggestedQueries'],
 } as const;
