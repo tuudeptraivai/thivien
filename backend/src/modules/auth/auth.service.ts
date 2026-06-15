@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import slugify from 'slugify';
-import { User } from '../../entities/user.entity';
+import { User, UserRole } from '../../entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
@@ -43,6 +43,7 @@ export class AuthService {
       email: dto.email,
       passwordHash,
       displayName: dto.display_name,
+      role: UserRole.MEMBER,
     });
 
     const saved = await this.userRepo.save(user);
@@ -143,6 +144,7 @@ export class AuthService {
       displayName: profile.displayName,
       avatarUrl: profile.avatarUrl ?? undefined,
       facebookId: profile.facebookId,
+      role: UserRole.MEMBER,
     });
     return this.userRepo.save(created);
   }

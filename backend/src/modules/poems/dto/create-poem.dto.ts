@@ -71,6 +71,11 @@ export class CreatePoemDto {
   @IsString()
   source_info?: string;
 
+  @ApiPropertyOptional({ description: 'Nội dung bài thơ — tạo nhanh bản chính. Bỏ qua nếu đã truyền versions.' })
+  @IsOptional()
+  @IsString()
+  content?: string;
+
   @ApiPropertyOptional({ default: false })
   @IsOptional()
   @IsBoolean()

@@ -15,6 +15,7 @@ import type {
   User,
   Era,
   Country,
+  Category,
   Translation,
 } from "./types";
 
@@ -139,6 +140,8 @@ export interface ComposePayload {
   source_info?: string;
   author_id?: number;
   author_name?: string;
+  category_id?: number;
+  era_id?: number;
 }
 
 export async function createPoem(payload: ComposePayload): Promise<Poem> {
@@ -148,6 +151,8 @@ export async function createPoem(payload: ComposePayload): Promise<Poem> {
     source_info: payload.source_info,
     author_id: payload.author_id,
     author_name: payload.author_name,
+    category_id: payload.category_id,
+    era_id: payload.era_id,
     versions: [{ content: payload.content, is_primary: true }],
   });
   return data.data;
@@ -346,6 +351,11 @@ export async function createForumPost(
 
 export async function getEras(): Promise<Era[]> {
   const { data } = await apiClient.get<ApiResponse<Era[]>>("/eras");
+  return data.data;
+}
+
+export async function getPoemCategories(): Promise<Category[]> {
+  const { data } = await apiClient.get<ApiResponse<Category[]>>("/poem-categories");
   return data.data;
 }
 

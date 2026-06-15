@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/stores/useStore";
-import { createPoem, getAuthors } from "@/lib/api";
-import type { Author } from "@/lib/types";
+import { createPoem, getAuthors, getPoemCategories, getEras } from "@/lib/api";
+import type { Author, Category, Era } from "@/lib/types";
 
 type AuthorMode = "self" | "existing" | "custom";
 
@@ -20,6 +20,12 @@ export default function TroLyPage() {
   const [selectedAuthorId, setSelectedAuthorId] = useState<string>("");
   const [customAuthorName, setCustomAuthorName] = useState("");
 
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [eras, setEras] = useState<Era[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [selectedEraId, setSelectedEraId] = useState<string>("");
+  const [sourceInfo, setSourceInfo] = useState("");
+
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
@@ -28,6 +34,12 @@ export default function TroLyPage() {
     getAuthors({ limit: 500 })
       .then((r) => active && setAuthors(r.data))
       .catch(() => active && setAuthors([]));
+    getPoemCategories()
+      .then((c) => active && setCategories(c))
+      .catch(() => active && setCategories([]));
+    getEras()
+      .then((e) => active && setEras(e))
+      .catch(() => active && setEras([]));
     return () => {
       active = false;
     };
@@ -70,6 +82,9 @@ export default function TroLyPage() {
         content: content.trim(),
         status: "published",
         ...author,
+        category_id: selectedCategoryId ? Number(selectedCategoryId) : undefined,
+        era_id: selectedEraId ? Number(selectedEraId) : undefined,
+        source_info: sourceInfo.trim() || undefined,
       });
       // "Chính tôi" → mục Thơ sáng tác; gắn tác giả → trang bài thơ trong thư viện.
       if (authorMode === "self") {
@@ -158,6 +173,56 @@ export default function TroLyPage() {
                   style={SELECT_STYLE}
                 />
               )}
+            </div>
+
+            {/* Thông tin phân loại */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 mt-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
+                  Thể loại
+                </label>
+                <select
+                  value={selectedCategoryId}
+                  onChange={(e) => setSelectedCategoryId(e.target.value)}
+                  className="text-sm border rounded-md px-2 py-1.5 outline-none"
+                  style={SELECT_STYLE}
+                >
+                  <option value="">— Không chọn —</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
+                  Thời kỳ / Triều đại
+                </label>
+                <select
+                  value={selectedEraId}
+                  onChange={(e) => setSelectedEraId(e.target.value)}
+                  className="text-sm border rounded-md px-2 py-1.5 outline-none"
+                  style={SELECT_STYLE}
+                >
+                  <option value="">— Không chọn —</option>
+                  {eras.map((er) => (
+                    <option key={er.id} value={er.id}>{er.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1 sm:col-span-2">
+                <label className="text-xs" style={{ color: "var(--color-muted-gray)", fontFamily: "var(--font-inter)" }}>
+                  Xuất xứ / Nguồn
+                </label>
+                <input
+                  value={sourceInfo}
+                  onChange={(e) => setSourceInfo(e.target.value)}
+                  placeholder="Vd: Thanh Hiên thi tập, sáng tác năm 2024..."
+                  className="text-sm border rounded-md px-2 py-1.5 outline-none"
+                  style={SELECT_STYLE}
+                />
+              </div>
             </div>
           </div>
 

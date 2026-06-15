@@ -50,4 +50,11 @@ export class QueryPoemDto {
   @IsOptional()
   @IsIn(['newest', 'views', 'abc'])
   sort?: string = 'newest';
+
+  @ApiPropertyOptional({
+    description: "Lọc trạng thái (admin): 'draft' | 'pending' | 'published' | 'all'",
+  })
+  @IsOptional()
+  @IsString()
+  status?: string;
 }
