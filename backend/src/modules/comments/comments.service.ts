@@ -36,6 +36,67 @@ export class CommentsService {
     };
   }
 
+  async adminFindAll(params: {
+    page?: number;
+    limit?: number;
+    entity_type?: string;
+    status?: string;
+    search?: string;
+  }) {
+    const { page = 1, limit = 20, entity_type, status, search } = params;
+    const skip = (page - 1) * limit;
+
+    const qb = this.commentRepo
+      .createQueryBuilder('c')
+      .leftJoinAndSelect('c.user', 'user');
+
+    if (entity_type) qb.andWhere('c.entityType = :entity_type', { entity_type });
+    if (status) qb.andWhere('c.status = :status', { status });
+    if (search) qb.andWhere('c.content LIKE :s', { s: `%${search}%` });
+
+    qb.orderBy('c.createdAt', 'DESC').skip(skip).take(limit);
+
+    const [rows, total] = await qb.getManyAndCount();
+
+    return {
+      success: true,
+      meta: {
+        total_records: total,
+        total_pages: Math.ceil(total / limit),
+        current_page: page,
+        limit,
+      },
+      data: rows.map((c) => ({
+        id: c.id,
+        entity_type: c.entityType,
+        entity_id: c.entityId,
+        content: c.content,
+        status: c.status,
+        parent_id: c.parentId,
+        author: c.user
+          ? { id: c.user.id, display_name: c.user.displayName }
+          : { display_name: c.guestName ?? 'Khách', is_guest: true },
+        created_at: c.createdAt,
+      })),
+    };
+  }
+
+  async update(id: number, dto: { content?: string; status?: string }) {
+    const comment = await this.commentRepo.findOne({ where: { id } });
+    if (!comment) throw new NotFoundException('Không tìm thấy bình luận');
+    if (dto.content !== undefined) comment.content = dto.content;
+    if (dto.status !== undefined) comment.status = dto.status;
+    const saved = await this.commentRepo.save(comment);
+    return { success: true, data: saved };
+  }
+
+  async remove(id: number) {
+    const comment = await this.commentRepo.findOne({ where: { id } });
+    if (!comment) throw new NotFoundException('Không tìm thấy bình luận');
+    await this.commentRepo.remove(comment);
+    return { success: true, message: 'Xóa bình luận thành công' };
+  }
+
   async create(dto: CreateCommentDto, user?: User) {
     if (!user && (!dto.guest_name || !dto.guest_email)) {
       throw new BadRequestException('Khách vãng lai phải cung cấp tên và email');

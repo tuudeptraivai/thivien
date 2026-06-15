@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -10,9 +11,12 @@ import { Poem, PoemStatus } from '../../entities/poem.entity';
 import { PoemVersion } from '../../entities/poem-version.entity';
 import { PoemLike } from '../../entities/poem-like.entity';
 import { Author } from '../../entities/author.entity';
+import { PoemCategory } from '../../entities/poem-category.entity';
+import { Era } from '../../entities/era.entity';
 import { CreatePoemDto } from './dto/create-poem.dto';
 import { UpdatePoemDto } from './dto/update-poem.dto';
 import { QueryPoemDto } from './dto/query-poem.dto';
+import { ImportPoemRowDto } from './dto/import-poems.dto';
 import { User, UserRole } from '../../entities/user.entity';
 
 @Injectable()
@@ -22,10 +26,43 @@ export class PoemsService {
     @InjectRepository(PoemVersion) private versionRepo: Repository<PoemVersion>,
     @InjectRepository(PoemLike) private likeRepo: Repository<PoemLike>,
     @InjectRepository(Author) private authorRepo: Repository<Author>,
+    @InjectRepository(PoemCategory)
+    private categoryRepo: Repository<PoemCategory>,
+    @InjectRepository(Era) private eraRepo: Repository<Era>,
   ) {}
 
+  /**
+   * Chuẩn hoá & kiểm tra các khoá ngoại tuỳ chọn. Trả về giá trị đã làm sạch
+   * (0/NaN → null) và ném BadRequest nếu id được cung cấp nhưng không tồn tại —
+   * thay cho lỗi 500 do ràng buộc khoá ngoại của MySQL.
+   */
+  private async validateRef<T>(
+    repo: Repository<T>,
+    id: number | null | undefined,
+    label: string,
+  ): Promise<number | null> {
+    if (id === undefined || id === null || (id as number) <= 0) return null;
+    const exists = await repo.findOne({ where: { id } as any });
+    if (!exists) throw new BadRequestException(`${label} không tồn tại`);
+    return id;
+  }
+
+  /**
+   * Phân giải author_id. Tác giả là tuỳ chọn: thơ do thành viên tự sáng tác thì
+   * không có tác giả. Vì vậy id rỗng/không hợp lệ/không tồn tại đều coi như
+   * "không có tác giả" (null) — bài thơ trở thành thơ sáng tác của thành viên,
+   * không ném lỗi.
+   */
+  private async resolveAuthorId(
+    id: number | null | undefined,
+  ): Promise<number | null> {
+    if (id === undefined || id === null || id <= 0) return null;
+    const exists = await this.authorRepo.findOne({ where: { id } });
+    return exists ? id : null;
+  }
+
   async findAll(query: QueryPoemDto) {
-    const { page = 1, limit = 20, search, author_id, category_id, era_id, is_member_poem, sort = 'newest' } = query;
+    const { page = 1, limit = 20, search, author_id, category_id, era_id, is_member_poem, sort = 'newest', status } = query;
     const skip = (page - 1) * limit;
 
     const qb = this.poemRepo.createQueryBuilder('p')
@@ -33,11 +70,18 @@ export class PoemsService {
       .leftJoinAndSelect('p.creator', 'creator')
       .leftJoinAndSelect('p.category', 'category')
       .leftJoinAndSelect('p.era', 'era')
-      .leftJoinAndSelect('p.versions', 'v', 'v.isPrimary = true')
-      .where('p.status = :status', { status: PoemStatus.PUBLISHED });
+      .leftJoinAndSelect('p.versions', 'v', 'v.isPrimary = true');
+
+    // Mặc định chỉ hiển thị thơ đã xuất bản; admin có thể truyền status để
+    // xem draft/pending hoặc 'all' để xem tất cả.
+    if (status && status !== 'all') {
+      qb.where('p.status = :status', { status });
+    } else if (!status) {
+      qb.where('p.status = :status', { status: PoemStatus.PUBLISHED });
+    }
 
     if (search) {
-      qb.andWhere('(p.title ILIKE :s OR EXISTS (SELECT 1 FROM poem_versions pv WHERE pv.poem_id = p.id AND (pv.content ILIKE :s OR pv.transcription ILIKE :s)))', { s: `%${search}%` });
+      qb.andWhere('(p.title LIKE :s OR EXISTS (SELECT 1 FROM poem_versions pv WHERE pv.poem_id = p.id AND (pv.content LIKE :s OR pv.transcription LIKE :s)))', { s: `%${search}%` });
     }
     if (author_id) qb.andWhere('p.authorId = :author_id', { author_id });
     if (category_id) qb.andWhere('p.categoryId = :category_id', { category_id });
@@ -145,17 +189,20 @@ export class PoemsService {
     const isAdmin = user.role === UserRole.ADMIN || user.role === UserRole.MODERATOR;
 
     // Phân giải tác giả: ưu tiên author_id; nếu chỉ có tên thì tìm hoặc tạo tác giả mới.
-    let authorId = dto.author_id ?? null;
+    // Không có author_id hợp lệ ⇒ thơ tự sáng tác của thành viên (không tác giả).
+    let authorId = await this.resolveAuthorId(dto.author_id);
     if (!authorId && dto.author_name?.trim()) {
       authorId = await this.findOrCreateAuthor(dto.author_name.trim(), user.id);
     }
+    const categoryId = await this.validateRef(this.categoryRepo, dto.category_id, 'Thể loại');
+    const eraId = await this.validateRef(this.eraRepo, dto.era_id, 'Thời kỳ');
 
     const poem = this.poemRepo.create({
       title: dto.title,
       slug,
       authorId,
-      categoryId: dto.category_id,
-      eraId: dto.era_id,
+      categoryId: categoryId ?? undefined,
+      eraId: eraId ?? undefined,
       sourceInfo: dto.source_info,
       // Không gắn tác giả nào = thơ do chính thành viên sáng tác.
       isMemberPoem: dto.is_member_poem ?? !authorId,
@@ -177,6 +224,16 @@ export class PoemsService {
         }),
       );
       await this.versionRepo.save(versions);
+    } else if (dto.content?.trim()) {
+      // Tạo nhanh: chỉ truyền nội dung → tạo bản chính.
+      await this.versionRepo.save(
+        this.versionRepo.create({
+          poemId: saved.id,
+          versionName: 'Bản chuẩn',
+          content: dto.content,
+          isPrimary: true,
+        }),
+      );
     }
 
     return { success: true, data: saved, message: 'Đăng bài thơ thành công' };
@@ -192,11 +249,25 @@ export class PoemsService {
       poem.createdBy === user.id;
     if (!canEdit) throw new ForbiddenException('Bạn không có quyền chỉnh sửa bài thơ này');
 
+    // Chỉ kiểm tra khoá ngoại khi client gửi giá trị mới.
+    const authorId =
+      dto.author_id !== undefined
+        ? await this.resolveAuthorId(dto.author_id)
+        : poem.authorId;
+    const categoryId =
+      dto.category_id !== undefined
+        ? await this.validateRef(this.categoryRepo, dto.category_id, 'Thể loại')
+        : poem.categoryId;
+    const eraId =
+      dto.era_id !== undefined
+        ? await this.validateRef(this.eraRepo, dto.era_id, 'Thời kỳ')
+        : poem.eraId;
+
     Object.assign(poem, {
       title: dto.title ?? poem.title,
-      authorId: dto.author_id ?? poem.authorId,
-      categoryId: dto.category_id ?? poem.categoryId,
-      eraId: dto.era_id ?? poem.eraId,
+      authorId,
+      categoryId,
+      eraId,
       sourceInfo: dto.source_info ?? poem.sourceInfo,
       isMemberPoem: dto.is_member_poem ?? poem.isMemberPoem,
       status: (dto.status as PoemStatus) ?? poem.status,
@@ -265,6 +336,89 @@ export class PoemsService {
     return { success: true, message: 'Xóa bài thơ thành công' };
   }
 
+  /**
+   * Nhập hàng loạt bài thơ từ CSV (đã được parse thành mảng dòng ở client).
+   * Mỗi dòng độc lập: lỗi dòng nào bỏ qua dòng đó và ghi lại, không chặn cả lô.
+   */
+  async importPoems(rows: ImportPoemRowDto[], user: User) {
+    let created = 0;
+    const errors: { row: number; title: string; message: string }[] = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i] ?? ({} as ImportPoemRowDto);
+      try {
+        const title = (r.title ?? '').trim();
+        if (!title) throw new Error('Thiếu tiêu đề');
+
+        const slug = await this.generateSlug(title);
+
+        const authorId = r.author_name?.trim()
+          ? await this.findOrCreateAuthor(r.author_name.trim(), user.id)
+          : null;
+        const categoryId = await this.findByName(this.categoryRepo, r.category);
+        const eraId = await this.findByName(this.eraRepo, r.era);
+
+        const status = (['draft', 'pending', 'published'] as string[]).includes(
+          (r.status ?? '').trim(),
+        )
+          ? ((r.status as string).trim() as PoemStatus)
+          : PoemStatus.PUBLISHED;
+
+        const poem = await this.poemRepo.save(
+          this.poemRepo.create({
+            title,
+            slug,
+            authorId,
+            categoryId: categoryId ?? undefined,
+            eraId: eraId ?? undefined,
+            sourceInfo: r.source_info?.trim() || undefined,
+            isMemberPoem: !authorId,
+            status,
+            createdBy: user.id,
+          }),
+        );
+
+        if (r.content?.trim()) {
+          await this.versionRepo.save(
+            this.versionRepo.create({
+              poemId: poem.id,
+              versionName: 'Bản chuẩn',
+              content: r.content,
+              isPrimary: true,
+            }),
+          );
+        }
+        created += 1;
+      } catch (e) {
+        errors.push({
+          row: i + 1,
+          title: (r.title ?? '').trim(),
+          message: (e as Error)?.message ?? 'Lỗi không xác định',
+        });
+      }
+    }
+
+    return {
+      success: true,
+      message: `Đã nhập ${created}/${rows.length} bài thơ`,
+      data: { total: rows.length, created, failed: errors.length, errors },
+    };
+  }
+
+  /** Tìm id bản ghi theo tên (không phân biệt hoa thường). null nếu rỗng/không thấy. */
+  private async findByName<T extends { id: number }>(
+    repo: Repository<T>,
+    name: string | undefined,
+  ): Promise<number | null> {
+    const n = name?.trim();
+    if (!n) return null;
+    const found = await repo
+      .createQueryBuilder('e')
+      .where('LOWER(e.name) = LOWER(:n)', { n })
+      .getOne();
+    return found ? found.id : null;
+  }
+
   async checkLiked(poemId: number, userId: number) {
     const existing = await this.likeRepo.findOne({ where: { poemId, userId } });
     return { success: true, data: { liked: Boolean(existing) } };
@@ -312,6 +466,7 @@ export class PoemsService {
       status: p.status,
       created_at: p.createdAt,
       excerpt,
+      content: primaryVersion?.content ?? '',
     };
   }
 

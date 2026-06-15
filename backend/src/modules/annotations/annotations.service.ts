@@ -9,6 +9,39 @@ import { User } from '../../entities/user.entity';
 export class AnnotationsService {
   constructor(@InjectRepository(Annotation) private annotationRepo: Repository<Annotation>) {}
 
+  async findAll(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    type?: string;
+  }) {
+    const { page = 1, limit = 20, search, type } = params;
+    const skip = (page - 1) * limit;
+
+    const qb = this.annotationRepo.createQueryBuilder('a');
+    if (search) {
+      qb.andWhere('(a.keyword LIKE :s OR a.explanation LIKE :s)', {
+        s: `%${search}%`,
+      });
+    }
+    if (type) qb.andWhere('a.type = :type', { type });
+
+    qb.orderBy('a.keyword', 'ASC').skip(skip).take(limit);
+
+    const [data, total] = await qb.getManyAndCount();
+
+    return {
+      success: true,
+      meta: {
+        total_records: total,
+        total_pages: Math.ceil(total / limit),
+        current_page: page,
+        limit,
+      },
+      data,
+    };
+  }
+
   async lookup(keyword: string) {
     const results = await this.annotationRepo.find({
       where: { keyword: ILike(`%${keyword}%`) },

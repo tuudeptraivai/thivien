@@ -21,6 +21,8 @@ import { ErasModule } from './modules/eras/eras.module';
 import { PoemCategoriesModule } from './modules/poem-categories/poem-categories.module';
 import { StatisticsModule } from './modules/statistics/statistics.module';
 import { DictionaryModule } from './modules/dictionary/dictionary.module';
+import { UsersModule } from './modules/users/users.module';
+import { RbacModule } from './modules/rbac/rbac.module';
 
 import { User } from './entities/user.entity';
 import { Author } from './entities/author.entity';
@@ -38,6 +40,8 @@ import { Country } from './entities/country.entity';
 import { Era } from './entities/era.entity';
 import { PoemCategory } from './entities/poem-category.entity';
 import { PoemLike } from './entities/poem-like.entity';
+import { Permission } from './entities/permission.entity';
+import { Role } from './entities/role.entity';
 
 @Module({
   imports: [
@@ -59,6 +63,7 @@ import { PoemLike } from './entities/poem-like.entity';
           Annotation, PoemAnnotation, Comment,
           ForumCategory, ForumTopic, ForumPost,
           Bookmark, Country, Era, PoemCategory, PoemLike,
+          Permission, Role,
         ],
         synchronize: config.get<boolean>('DB_SYNCHRONIZE', false),
         logging: config.get<boolean>('DB_LOGGING', false),
@@ -79,6 +84,8 @@ import { PoemLike } from './entities/poem-like.entity';
     PoemCategoriesModule,
     StatisticsModule,
     DictionaryModule,
+    UsersModule,
+    RbacModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },

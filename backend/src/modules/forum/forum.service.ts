@@ -108,6 +108,89 @@ export class ForumService {
     return { success: true, data: { topic, first_post: firstPost } };
   }
 
+  // --- Admin CRUD: Topics ---
+  async updateTopic(
+    id: number,
+    dto: {
+      title?: string;
+      category_id?: number;
+      is_pinned?: boolean;
+      is_locked?: boolean;
+    },
+  ) {
+    const topic = await this.topicRepo.findOne({ where: { id } });
+    if (!topic) throw new NotFoundException('Không tìm thấy chủ đề');
+    if (dto.title !== undefined) topic.title = dto.title;
+    if (dto.category_id !== undefined) topic.categoryId = dto.category_id;
+    if (dto.is_pinned !== undefined) topic.isPinned = dto.is_pinned;
+    if (dto.is_locked !== undefined) topic.isLocked = dto.is_locked;
+    const saved = await this.topicRepo.save(topic);
+    return { success: true, data: saved };
+  }
+
+  async removeTopic(id: number) {
+    const topic = await this.topicRepo.findOne({ where: { id } });
+    if (!topic) throw new NotFoundException('Không tìm thấy chủ đề');
+    await this.topicRepo.remove(topic);
+    return { success: true, message: 'Xóa chủ đề thành công' };
+  }
+
+  // --- Admin CRUD: Posts ---
+  async getPosts(query: {
+    page?: number;
+    limit?: number;
+    topic_id?: number;
+    search?: string;
+  }) {
+    const { page = 1, limit = 20, topic_id, search } = query;
+    const skip = (page - 1) * limit;
+
+    const qb = this.postRepo
+      .createQueryBuilder('p')
+      .leftJoinAndSelect('p.user', 'user')
+      .leftJoinAndSelect('p.topic', 'topic');
+
+    if (topic_id) qb.andWhere('p.topicId = :topic_id', { topic_id });
+    if (search) qb.andWhere('p.content LIKE :s', { s: `%${search}%` });
+
+    qb.orderBy('p.createdAt', 'DESC').skip(skip).take(limit);
+
+    const [rows, total] = await qb.getManyAndCount();
+    return {
+      success: true,
+      meta: {
+        total_records: total,
+        total_pages: Math.ceil(total / limit),
+        current_page: page,
+        limit,
+      },
+      data: rows.map((p) => ({
+        id: p.id,
+        topic_id: p.topicId,
+        topic_title: p.topic?.title ?? '',
+        author_name: p.user?.displayName ?? 'Ẩn danh',
+        content: p.content,
+        parent_id: p.parentId,
+        created_at: p.createdAt,
+      })),
+    };
+  }
+
+  async updatePost(id: number, dto: { content?: string }) {
+    const post = await this.postRepo.findOne({ where: { id } });
+    if (!post) throw new NotFoundException('Không tìm thấy bài viết');
+    if (dto.content !== undefined) post.content = dto.content;
+    const saved = await this.postRepo.save(post);
+    return { success: true, data: saved };
+  }
+
+  async removePost(id: number) {
+    const post = await this.postRepo.findOne({ where: { id } });
+    if (!post) throw new NotFoundException('Không tìm thấy bài viết');
+    await this.postRepo.remove(post);
+    return { success: true, message: 'Xóa bài viết thành công' };
+  }
+
   async createPost(topicId: number, dto: CreateForumPostDto, user: User) {
     const topic = await this.topicRepo.findOne({ where: { id: topicId } });
     if (!topic) throw new NotFoundException('Không tìm thấy chủ đề');

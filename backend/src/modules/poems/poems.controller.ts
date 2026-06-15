@@ -16,7 +16,10 @@ import { UpdatePoemDto } from './dto/update-poem.dto';
 import { QueryPoemDto } from './dto/query-poem.dto';
 import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { User } from '../../entities/user.entity';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { User, UserRole } from '../../entities/user.entity';
+import { ImportPoemsDto } from './dto/import-poems.dto';
 
 @ApiTags('Poems')
 @Controller('poems')
@@ -56,6 +59,15 @@ export class PoemsController {
   @ApiOperation({ summary: 'Toggle yêu thích / bỏ yêu thích bài thơ' })
   toggleLike(@Param('id') id: string, @CurrentUser() user: User) {
     return this.poemsService.toggleLike(+id, user.id);
+  }
+
+  @Post('import')
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.MODERATOR)
+  @ApiOperation({ summary: 'Nhập hàng loạt bài thơ từ CSV (admin)' })
+  importPoems(@Body() dto: ImportPoemsDto, @CurrentUser() user: User) {
+    return this.poemsService.importPoems(dto.rows, user);
   }
 
   @Post()

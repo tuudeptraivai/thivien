@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AnnotationsService } from './annotations.service';
 import { CreateAnnotationDto, UpdateAnnotationDto } from './dto/create-annotation.dto';
 import { Public } from '../../common/decorators/public.decorator';
@@ -18,6 +18,29 @@ export class AnnotationsController {
   @ApiOperation({ summary: 'Tra cứu từ điển Hán Việt / điển tích' })
   lookup(@Query('keyword') keyword: string) {
     return this.annotationsService.lookup(keyword);
+  }
+
+  @Get()
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.MODERATOR)
+  @ApiOperation({ summary: 'Danh sách chú giải (phân trang, Admin/Mod)' })
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'limit', required: false })
+  @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'type', required: false })
+  findAll(
+    @Query('page') page = '1',
+    @Query('limit') limit = '20',
+    @Query('search') search?: string,
+    @Query('type') type?: string,
+  ) {
+    return this.annotationsService.findAll({
+      page: +page,
+      limit: +limit,
+      search,
+      type,
+    });
   }
 
   @Post()
